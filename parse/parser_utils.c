@@ -14,19 +14,36 @@ int	check_quote(const char *s, int i, char c)
 	return (len + 1);
 }
 
+int	ft_find_redirection(char const *s, int i)
+{
+	if (s[i] == '>' && s[i])
+	{
+		if (s[i + 1] == '>')
+			return (2);
+		return (1);
+	}
+	else if (s[i] == '<' && s[i])
+	{
+		if (s[i + 1] == '<')
+			return (4);
+		return (3);
+	}
+	return (0);
+}
+
 int	ft_special_lword(char const *s, int i)
 {
 	int	size;
 
 	size = 0;
-	if (s[i] == '\"' && s[i])
+	if (s[i] == '>' || s[i] == '<')
+		size = ft_find_redirection(s, i); 
+	else if (s[i] == '\"' && s[i])
 		size = check_quote(s, i, '\"');
 	else if (s[i] == '\'' && s[i])
 		size = check_quote(s, i, '\'');
 	else
-	{
 		size = check_quote(s, i, ' ');
-	}
 	return (size + 1);
 }
 
@@ -54,6 +71,7 @@ char	**ft_special_split(char const *s)
 		if (!strs[j])
 			return (NULL);
 		i += size;
+		printf("%s\n", strs[j]);
 	}
 	strs[j] = 0;
 	return (strs);

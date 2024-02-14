@@ -19,9 +19,10 @@ FLAGLFT = -Llibft -lft
 SRCS = main.c \
 	exit.c \
 	parse/ft_separ.c \
+	parse/parser.c \
+	parse/redirection.c\
 	parse/parser_error.c \
 	parse/parser_utils2.c \
-	parse/parser.c \
 	parse/parser_utils.c \
 	utils.c \
 	utils2.c \

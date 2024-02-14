@@ -144,9 +144,15 @@ void	parser(t_base *base)
 		print_list_env(base->env);
 	else if (ft_strcmp("echo", base->tableau[0]) == 0)
 		own_echo(base);
+	else if (ft_strcmp("pwd", base->tableau[0]) == 0)
+		get_pwd(base);
+	else if (ft_strcmp("cd", base->tableau[0]) == 0)
+		own_cd(base->input);
+	else if (ft_strcmp("", base->tableau[0]) == 0)
+
 	return; 
 }
 
 	//chaque "mot" dans un maillon [x]
-	//changer les variables env en votre valeur ($PATH -> path dans votre env) [?]
+	//changer les variables env en votre valeur ($PATH -> path dans votre env) [x]
 	// -> exec [?]

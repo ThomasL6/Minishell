@@ -116,7 +116,9 @@ int		ft_strnlen(char *s, int i);
 char	*spaceless_strdup(t_base *base);
 int		only_dots(char *s, int i);
 int		many_dots(char *s, int i);
+int		ft_find_redirection(char const *s, int i);
 
+int		ft_redir(t_base *base);
 	/*-check-*/
 		/*c_quote*/
 int		chk_quote(char *s);
