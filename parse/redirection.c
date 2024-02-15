@@ -60,42 +60,88 @@
 // 	}
 // 	main2(av, fd, flag);
 // }
+
+int	ft_find_redirection(char const *s, int i)
+{
+	if (s[i] == '>' && s[i])
+	{
+		if (s[i + 1] == '>')
+			return (2);
+		return (1);
+	}
+	else if (s[i] == '<' && s[i])
+	{
+		if (s[i + 1] == '<')
+			return (4);
+		return (3);
+	}
+	return (0);
+}
 int ft_redir(t_base *base)
 {
-	char	*str;
-	int		fd;
-	int		i;
-	int		symb;
+    char *str;
+    int fd;
+    int i;
+    int symb;
 
-	i = 0;
-	str = base->input;
-	symb = ft_find_redirection(&str[i], i);
-	while(str[i])
-	{
-		if(symb == 1)
-		{
-			fd = open(str + i + 1, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-			if (fd == -1)
-			{
-				perror("Error opening file");
-				return(-1);
-			}
-			while(str[i] && str[i] != ' ')
-				i++;
-		}
- 		else if (symb == 2)
+    i = 0;
+    str = base->input;
+    symb = ft_find_redirection(&str[i], i);
+    while (str[i])
+    {
+        if (symb == 1)
         {
-            fd = open(str + i + 2, O_WRONLY | O_APPEND | O_CREAT, 0644);
+            fd = open(str + i + 1, O_WRONLY | O_CREAT | O_TRUNC, 0644);
             if (fd == -1)
             {
-				perror("Error opening file for writing");
+                perror("Error opening file");
                 return (-1);
             }
-         	while (str[i] && str[i] != ' ')
-                i++;
+            // Rediriger stdout vers le fichier
+            if (dup2(fd, STDOUT_FILENO) == -1)
+            {
+                perror("Error redirecting stdout");
+                close(fd);
+                return (-1);
+            }
+            close(fd); // Fermer le descripteur de fichier du fichier ouvert
+            break; // Arrêter la recherche de redirections après avoir trouvé une redirection >
         }
-        else
-            i++;
+        else if (symb == 2)
+        {
+            fd = open(str + i + 2, O_WRONLY | O_CREAT | O_APPEND, 0644);
+            if (fd == -1)
+            {
+                perror("Error opening file");
+                return (-1);
+            }
+            // Rediriger stdout vers le fichier
+            if (dup2(fd, STDOUT_FILENO) == -1)
+            {
+                perror("Error redirecting stdout");
+                close(fd);
+                return (-1);
+            }
+            close(fd); // Fermer le descripteur de fichier du fichier ouvert
+            break; // Arrêter la recherche de redirections après avoir trouvé une redirection >>
+        }
+        i++;
     }
     return 0;
 }
+
+
+int main(void)
+{
+	t_base base;
+	base.input = "commande > fichier.txt"; // exemple d'entrée avec redirection
+
+	if (ft_redir(&base) == -1)
+	{
+		fprintf(stderr, "Redirection failed\n");
+		exit(EXIT_FAILURE);
+	}
+
+	// Votre code pour exécuter la commande avec redirection ici
+
+	return (0);
