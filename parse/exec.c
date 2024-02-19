@@ -31,27 +31,27 @@ int fd_write(int fd, char *str, int flag)
     return strlen(str);
 }
 
-int ft_write_redir(char **av, int fd, int flag)
-{
-	if (atoi(av[1]) && fd && read(fd, NULL, 1) <= 1)
-		flag = 1; // if file is empty
-	if (fd == -1)
-	{
-		printf("Error - file not found\n");
-		return (-1);
-	}
-	else if (av[3])
-	{
-		fd_write(fd, av[3], flag);
-		close(fd);
-	}
-	else
-	{
-		printf("Error - no text to write\n");
-		return (-2);
-	}
-	return (0);
-}
+// int ft_write_redir(char **av, int fd, int flag)
+// {
+// 	if (atoi(av[1]) && fd && read(fd, NULL, 1) <= 1)
+// 		flag = 1; // if file is empty
+// 	if (fd == -1)
+// 	{
+// 		printf("Error - file not found\n");
+// 		return (-1);
+// 	}
+// 	else if (av[3])
+// 	{
+// 		fd_write(fd, av[3], flag);
+// 		close(fd);
+// 	}
+// 	else
+// 	{
+// 		printf("Error - no text to write\n");
+// 		return (-2);
+// 	}
+// 	return (0);
+// }
 
 
 int ft_redir(t_base *base)
