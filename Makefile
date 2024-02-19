@@ -18,9 +18,8 @@ FLAGLFT = -Llibft -lft
 
 SRCS = main.c \
 	exit.c \
-	parse/ft_separ.c \
 	parse/parser.c \
-	parse/redirection.c\
+	parse/exec.c \
 	parse/parser_error.c \
 	parse/parser_utils2.c \
 	parse/parser_utils.c \
@@ -34,6 +33,7 @@ SRCS = main.c \
 	builtin/ft_cd.c \
 	builtin/ft_echo.c \
 	user.c \
+	builtin/ft_export.c \
 
 
 OBJS = $(SRCS:.c=.o)

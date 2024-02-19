@@ -71,7 +71,7 @@ char	**ft_special_split(char const *s)
 		if (!strs[j])
 			return (NULL);
 		i += size;
-		printf("%s\n", strs[j]);
+		//printf("%s\n", strs[j]);
 	}
 	strs[j] = 0;
 	return (strs);

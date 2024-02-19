@@ -137,10 +137,13 @@ void	get_input_tab(t_base *base)
 	}
 }
 
+
 void	parser(t_base *base)
 {
 	get_input_tab(base);
-	if (ft_strcmp("env", base->tableau[0]) == 0)
+	if (ft_strcmp("", base->tableau[0]) == 0)
+		return ;
+	else if (ft_strcmp("env", base->tableau[0]) == 0)
 		print_list_env(base->env);
 	else if (ft_strcmp("echo", base->tableau[0]) == 0)
 		own_echo(base);
@@ -148,9 +151,11 @@ void	parser(t_base *base)
 		get_pwd(base);
 	else if (ft_strcmp("cd", base->tableau[0]) == 0)
 		own_cd(base->input);
-	else if (ft_strcmp("", base->tableau[0]) == 0)
-
-	return; 
+	else if (ft_strcmp("export", base->tableau[0]) == 0)
+		ft_export(base);
+	else if (!ft_exec_prog(base->tableau, base))
+		printf("Error - command %s not found\n", base->input);
+	return ;
 }
 
 	//chaque "mot" dans un maillon [x]

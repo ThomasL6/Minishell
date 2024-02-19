@@ -34,12 +34,12 @@ void    print_chain(t_env *chain)
 		return ;
 	while (chain->next)
 	{
-		printf("%s=%s\n", chain->name, chain->value);
+		printf("%s%s\n", chain->name, chain->value);
 		chain = chain->next;
 	}
 }
 
-char    *ft_get_string(t_env *chain, char *name)
+char    *get_var_env(t_env *chain, char *name)
 {
     char *s;
 

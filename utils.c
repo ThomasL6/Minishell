@@ -29,7 +29,7 @@ int	find_equal(char *s)
 	if (!s)
 	{
 		printf("str in find equal is NULL");
-		return (-1);
+		return (0);
 	}
 	i = 0;
 	while (s[i] != '\0')
@@ -38,7 +38,7 @@ int	find_equal(char *s)
 			return (i);
 		i++;
 	}
-	return (-1);
+	return (0);
 }
 
 char	*ft_dup_name(char *env)

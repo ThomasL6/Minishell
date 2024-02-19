@@ -1,6 +1,7 @@
 
 #include "../include/minishell.h"
 
+
 void    add_link(t_env **chain, char *env)
 {
     t_env   *link;
@@ -10,7 +11,7 @@ void    add_link(t_env **chain, char *env)
     if (NULL == link)
         return ;
     link->next = NULL;
-    link->name = ft_dup_name(env);
+    link->name = ft_strjoin(ft_dup_name(env), "=");
     link->value = ft_dup_value(env);
 	if (ft_strcmp(link->name, "SHLVL") == 0)
     	link->value = ft_shlvl_var(link->value);
@@ -56,11 +57,16 @@ void	print_list_env(t_env *env_struct)
 	}
 	while (env_struct)
 	{
-		if (env_struct->name && env_struct->value)
-			printf("%s=%s\n", env_struct->name, env_struct->value);
-		else
-			printf("name and value not set");
-		env_struct = env_struct->next;
+        if (env_struct->name[ft_strlen(env_struct->name) - 1] == '=')
+        {
+
+		    if (env_struct->name && env_struct->value) 
+			    printf("%s%s\n", env_struct->name, env_struct->value); // verifier si il y a des "" au debut et a la fin et ne pas els ecrire si il sont la
+		    else    
+			    printf("name and value not set");
+		    env_struct = env_struct->next;
+        }
+        else
+            env_struct = env_struct->next;
 	}
 }
-

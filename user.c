@@ -27,7 +27,7 @@ void	init_user2(char *s, char *tmp, int k, t_base *base)
 	}
 	tmp[j] = '\0';
 	free(s);
-	base->user = ft_strjoin(ft_get_string(base->env, "USER"), "@");
+	base->user = ft_strjoin(get_var_env(base->env, "USER="), "@");
 	base->user = ft_strjoin(base->user, tmp);
 	base->user = ft_strjoin(base->user, ":~$ ");
 }
@@ -43,7 +43,7 @@ void	init_user(t_base *base)
 	i = 6;
 	j = 0;
 	k = 6;
-	s  = ft_get_string(base->env, "SESSION_MANAGER");
+	s  = get_var_env(base->env, "SESSION_MANAGER=");
 	while (s[i] != '.' && s[i])
 	{
 		i++;
@@ -53,8 +53,3 @@ void	init_user(t_base *base)
 	tmp = malloc(sizeof(char *) * j + 1);
 	init_user2(s, tmp, k, base);
 }
-
-// void	init_base_struct(t_base *base)
-// {
-	// 
-// }

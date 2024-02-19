@@ -103,11 +103,15 @@ void own_echo(t_base *base)
     }
     else if (base->tableau[1])
     {
-        if (strcmp(base->tableau[1], "-n") == 0)
+        while (base->tableau[i] && base->tableau[i][0] == '-')
         {
-            // printf("is in the if 1\n");
-            flag = 1;
-            i++;
+            if (strcmp(base->tableau[i], "-n") == 0)
+            {
+                flag = 1;
+                i++;
+            }
+            else
+                break;
         }
         while (base->tableau[i])
         {

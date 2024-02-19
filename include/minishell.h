@@ -49,6 +49,7 @@ typedef struct s_base
 	char	*input;
 	char	*user;
 	char	*cur_pwd;
+	char 	**env_old;
 
 	t_env		*env;
 }				t_base;
@@ -90,10 +91,11 @@ int		ft_strcmp(char *s1, char *s2);
 char	*ft_shlvl_var(char *s2);
 t_env	*find_last(t_env *head);
 void    print_chain(t_env *chain);
-char    *ft_get_string(t_env *chain, char *name);
+char    *get_var_env(t_env *chain, char *name);
 
 		/*listchained2*/
 void    add_link(t_env **chain, char *env);
+void    add_more_link(t_env **chain, char *str);
 void    initial_chain(t_env **chain, char **env);
 void	print_list_env(t_env *env_struct);
 
@@ -144,5 +146,9 @@ int	ft_strlen_wo_quote(char *s);
 char	*ft_strstrip(char *s);
 
 void	own_echo(t_base *base);
+
+
+int ft_exec_prog(char **av, t_base *base);
+int	ft_export(t_base *base);
 
 #endif
