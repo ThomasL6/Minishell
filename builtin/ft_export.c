@@ -96,59 +96,83 @@ void update_more_link(t_env *chain, char *env)
 }
 
 
-void add_more_link(t_env **chain, char *env)
+void add_more_link(t_env **chain, char *env) 
 {
     t_env   *link;
     t_env   *last_link;
+    char    *equal_ptr;
 
-    link = malloc(sizeof * link);
-    if (NULL == link)
-        return ;
-    link->next = NULL;
-    link->name = ft_strndup(env, ft_is_that_char(env, '='));
-	if (there_is_equal(env) == 1)
-		link->value = ft_dup_value(env);
-	else
-		link->value = NULL;
-    if (*chain == NULL)
+    link = malloc(sizeof(*link)); if (!link) return; link->next = NULL;
+
+    equal_ptr = strchr(env, '=');
+    if (equal_ptr != NULL) 
     {
-        *chain = link;
-        link->previous = NULL;
+        link->name = ft_strndup(env, equal_ptr - env);
+        
+        char *value_start = equal_ptr + 1;
+        if (*value_start == '"') 
+        {
+            char *end_quote = strchr(value_start + 1, '"');
+            if (end_quote != NULL) 
+            {
+                link->value = ft_strndup(value_start, end_quote - value_start + 1);
+            } 
+            else 
+            {
+                link->value = ft_strdup(value_start);
+            }
+        } 
+        else 
+        {
+            link->value = ft_strdup(value_start);
+        }
+    } 
+    else 
+    {
+        link->name = ft_strdup(env);
+        link->value = NULL;
     }
-    else
+
+    if (*chain == NULL) 
+    { 
+        *chain = link; 
+        link->previous = NULL; 
+    } 
+    else 
     {
-        last_link = find_last(*chain);
+        last_link = *chain;
+        while (last_link->next != NULL) 
+        { 
+            last_link = last_link->next; 
+        }
         last_link->next = link;
         link->previous = last_link;
     }
 }
 
 
-void	print_list_env_export(t_env *env_struct)
-{
-	if (!env_struct)
-	{
-		printf("error - print list not there");
-		return ;
-	}
-	while (env_struct)
-	{
-		if (env_struct->name)
-			printf("declare -x ");
-		if (env_struct->name)
-			printf("%s", env_struct->name);
-		if (env_struct->value)
-		{
-			// if (env_struct->value[0] == '\"' && env_struct->value[ft_strlen(env_struct->value) - 1] == '\"')
-			// 	printf("%s", env_struct->value);
-			// else
-				printf("\"%s\"", env_struct->value);
-		}
-		if (!env_struct->name && !env_struct->value) 
-			printf("name and value not set\n");
-		else
-			printf("\n");
-		env_struct = env_struct->next;
+
+void print_list_env_export(t_env *env_struct) {
+    if (!env_struct) {
+        printf("error - print list not there");
+        return;
+    }
+    while (env_struct) {
+        if (env_struct->name)
+            printf("declare -x ");
+        if (env_struct->name)
+            printf("%s", env_struct->name);
+        if (env_struct->value) {
+            // if (env_struct->value[0] == '\"' && env_struct->value[ft_strlen(env_struct->value) - 1] == '\"')
+            //  printf("%s", env_struct->value);
+            // else
+            printf("\"%s\"", env_struct->value);
+        }
+        if (!env_struct->name && !env_struct->value)
+            printf("name and value not set\n");
+        else
+            printf("\n");
+        env_struct = env_struct->next;
     }
 }
 
@@ -205,42 +229,38 @@ int	goto_end_old_env_var(t_base *base)
 }
 
 
-int	ft_export(t_base *base)
-{
-	int i;
+int ft_export(t_base *base) {
+    int i;
 
-	i = 1;
-	if (!base->tableau)
-		return (0);
-	if (base->tableau[1] == NULL)
-	{
-		print_list_env_export(base->env);
-		return (2);
-	}
-	while (base->tableau[i])
-	{
-		if (there_is_equal(base->tableau[i]) == 0)
-		{
-			if (!(link_already_exist(base->env, base->tableau[i]) == 1))
-			{
-				add_more_link(&base->env, base->tableau[i]);
-				base->env_old[ft_tablen(base->tableau) + 1] = ft_strdup(base->tableau[i]);
-			}
-		}
-		else if (there_is_equal(base->tableau[i]) == 1)
-		{
-			if (!(link_already_exist(base->env, base->tableau[i]) == 1))
-			{
-				add_more_link(&base->env, base->tableau[i]);
-				base->env_old[ft_tablen(base->tableau) + 1] = ft_strdup(base->tableau[i]);
-			}
-			else
-			{
-				update_more_link(base->env, base->tableau[i]);
-				base->env_old[ft_tablen(base->tableau) + 1] = ft_strdup(base->tableau[i]);
-			}
-		}
-		i++;
-	}
-	return (1);
+    i = 1;
+    if (!base->tableau)
+        return (0);
+    if (base->tableau[1] == NULL) {
+        print_list_env_export(base->env);
+        return (2);
+    }
+    while (base->tableau[i]) {
+        if (there_is_equal(base->tableau[i])) {
+            if (!(link_already_exist(base->env, base->tableau[i]) == 1)) {
+                add_more_link(&base->env, base->tableau[i]);
+            } else {
+                update_more_link(base->env, base->tableau[i]);
+            }
+        } else {
+            // Concatenate value to existing variable's value
+            t_env *link = get_link(base->env, base->tableau[i]);
+            if (link) {
+                char *old_value = link->value;
+                char *new_value = ft_strdup(base->tableau[i]);
+                char *concatenated_value = ft_strjoin(old_value, new_value);
+                free(link->value);
+                link->value = concatenated_value;
+                free(new_value);
+            } else {
+                add_more_link(&base->env, base->tableau[i]);
+            }
+        }
+        i++;
+    }
+    return (1);
 }
