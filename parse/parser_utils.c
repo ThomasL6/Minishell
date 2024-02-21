@@ -31,6 +31,20 @@ int	ft_find_redirection(char const *s, int i)
 	return (0);
 }
 
+int	where_is_equal(const char *s, int i) // return len before the char
+{
+	int start;
+
+	start = i;
+	while (s[i] != '=' && s[i] != '\0')
+	{
+		if (s[i] == '=')
+			return (i - start);
+		i++;
+	}
+	return (ft_strlen(s));
+}
+
 int	ft_special_lword(char const *s, int i)
 {
 	int	size;
@@ -42,10 +56,16 @@ int	ft_special_lword(char const *s, int i)
 		size = check_quote(s, i, '\"');
 	else if (s[i] == '\'' && s[i])
 		size = check_quote(s, i, '\'');
+	else if (s[i] == '=' && s[i])
+	{
+		printf("%d\n", size);
+		size = where_is_equal(s, i);
+	}
 	else
 		size = check_quote(s, i, ' ');
 	return (size + 1);
 }
+
 
 char	**ft_special_split(char const *s)
 {
@@ -59,6 +79,7 @@ char	**ft_special_split(char const *s)
 	j = -1;
 	size = 0;
 	word = countwords(s, 0, 0, 0);
+	printf("word = %d\n", word);
 	strs = (char **)malloc((word + 1) * sizeof(char *));
 	if (!strs)
 		return (NULL);

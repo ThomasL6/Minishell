@@ -42,7 +42,6 @@ typedef struct s_env
 	char			*value;
 }				t_env;
 
-
 typedef struct s_base
 {
 	char	**tableau;
@@ -95,7 +94,7 @@ char    *get_var_env(t_env *chain, char *name);
 
 		/*listchained2*/
 void    add_link(t_env **chain, char *env);
-void    add_more_link(t_env **chain, char *str);
+void    add_more_link(t_env **chain, char *env);
 void    initial_chain(t_env **chain, char **env);
 void	print_list_env(t_env *env_struct);
 
@@ -139,16 +138,22 @@ void	parser(t_base *base);
 int		countwords(char const *str, int count, int inword, int insidequotes);
 void	get_input_tab(t_base *base);
 
-int	double_quote(const char *s, int i);
-int	ft_special_lword(char const *s, int i);
+int		double_quote(const char *s, int i);
+int		ft_special_lword(char const *s, int i);
 char	**ft_special_split(char const *s);
-int	ft_strlen_wo_quote(char *s);
+int		ft_strlen_wo_quote(char *s);
 char	*ft_strstrip(char *s);
 
 void	own_echo(t_base *base);
 
 
-int ft_exec_prog(char **av, t_base *base);
-int	ft_export(t_base *base);
+int 	ft_exec_prog(char **av, t_base *base);
+int		ft_export(t_base *base);
+
+char	*ft_strndup(const char *s, int n);
+void 	ft_unset(t_base *base);
+int	ft_tablen(char **tab);
+int	ft_is_that_char(const char *s, int c);
+
 
 #endif

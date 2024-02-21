@@ -29,46 +29,46 @@ int	fd_write(int fd, char *str, int flag)
 	return (strlen(str));
 }
 
-int main2(char **av, int fd, int flag)
-{
-	if (atoi(av[1]) && fd && read(fd, NULL, 1) <= 1)
-		flag = 1; // if file is empty
-	if (fd == -1)
-	{
-		printf("Error - file not found\n");
-		return (-1);
-	}
-	else if (av[3])
-	{
-		fd_write(fd, av[3], flag);
-		close(fd);
-	}
-	else
-	{
-		printf("Error - no text to write\n");
-		return (-2);
-	}
-	return (0);
-}
+// int main2(char **av, int fd, int flag)
+// {
+// 	if (atoi(av[1]) && fd && read(fd, NULL, 1) <= 1)
+// 		flag = 1; // if file is empty
+// 	if (fd == -1)
+// 	{
+// 		printf("Error - file not found\n");
+// 		return (-1);
+// 	}
+// 	else if (av[3])
+// 	{
+// 		fd_write(fd, av[3], flag);
+// 		close(fd);
+// 	}
+// 	else
+// 	{
+// 		printf("Error - no text to write\n");
+// 		return (-2);
+// 	}
+// 	return (0);
+// }
 
-int	main(int ac, char **av)
-{
-	int fd = -1;
-	int flag = 0;
+// int	main(int ac, char **av)
+// {
+// 	int fd = -1;
+// 	int flag = 0;
 
-	if (ac <= 1)
-		printf("Error - no input\n");
-	if (atoi(av[1]) == 0)
-		fd = open(av[2], O_WRONLY | O_CREAT, 0640);
-	else if (atoi(av[1]) == 1)
-		fd = open(av[2], O_WRONLY | O_APPEND | O_CREAT, 0640);
-	else
-	{
-		printf("Error - invalide mode\n");
-		return (-3);
-	}
-	main2(av, fd, flag);
-}
+// 	if (ac <= 1)
+// 		printf("Error - no input\n");
+// 	if (atoi(av[1]) == 0)
+// 		fd = open(av[2], O_WRONLY | O_CREAT, 0640);
+// 	else if (atoi(av[1]) == 1)
+// 		fd = open(av[2], O_WRONLY | O_APPEND | O_CREAT, 0640);
+// 	else
+// 	{
+// 		printf("Error - invalide mode\n");
+// 		return (-3);
+// 	}
+// 	main2(av, fd, flag);
+// }
 
 /*---------------------------------------------------------*/
 
@@ -94,3 +94,33 @@ int	main(int ac, char **av)
 // 		printf("original proces %d\n", pid);
 // 	return (0);
 // }
+
+int ft_strlen(const char *s)
+{
+	int i;
+
+	i = 0;
+	while (s[i])
+		i++;
+	return (i);
+}
+
+int	ft_is_that_char(const char *s, int c)
+{
+	int	i;
+
+	i = 0;
+	while (s[i])
+	{
+		if (s[i] == (char)c)
+			return (i);
+		i++;
+	}
+	return (ft_strlen(s));
+}
+
+int	main(int ac, char **av)
+{
+	printf("%d", ft_is_that_char(av[1], '='));
+	return (0);
+}

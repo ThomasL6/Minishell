@@ -12,6 +12,8 @@
 
 #include "include/minishell.h"
 
+
+
 void	received_signal(int n)
 {
 	if (n == SIGTSTP)
@@ -29,7 +31,10 @@ void	received_signal(int n)
 		rl_redisplay();
 	}
 	else if (n == SIGSEGV) // mem crash should not be there
-		printf("SIGSEGV\n");
+	{
+		printf("SIGSEGV -> Fuck you\n");
+		exit(-2147483647);
+	}
 }
 
 int	ft_parser(char *s)
@@ -48,7 +53,7 @@ int	ft_parser(char *s)
 	}
 	else
 	{
-		printf("else condition does not exist\n");
+		printf("Error - else condition does not exist\n");
 		return (0);
 	}
 	return (1);
@@ -104,6 +109,7 @@ int	main(int ac, char **av, char **env)
 	signal(SIGINT, &received_signal);
 	signal(SIGTSTP, &received_signal);
 	signal(SIGQUIT, &received_signal);
+	//signal(SIGSEGV, &received_signal); // remove this
 
 
 	base = malloc(sizeof(t_base));

@@ -12,6 +12,7 @@
 
 #include "include/minishell.h"
 
+
 void	message(int i)
 {
 	if (i == 1)
@@ -25,6 +26,7 @@ void	exit_prog(int i, void *ptr)
         message(i);
         free(ptr);
     }
+	
 }
 
 void    free_chain(t_env **chain)

@@ -49,10 +49,12 @@ char	*ft_dup_name(char *env)
 	name = malloc(sizeof(char *) * find_equal(env) + 1);
 	if (!name)
 		return (NULL);
-	if (find_equal(env) != -1)
+	if (find_equal(env) != 0)
 	{
-		while (env[i] != '=')
+		while (env[i] != '\0')
 		{
+			if (env[i] == '=')
+				break;
 			name[i] = env[i];
 			i++;
 		}

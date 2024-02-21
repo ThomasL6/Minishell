@@ -53,7 +53,6 @@ int fd_write(int fd, char *str, int flag)
 // 	return (0);
 // }
 
-
 int ft_redir(t_base *base)
 {
     char *str;
@@ -206,7 +205,8 @@ int	ft_exec(char *fp, char **av, char **env)
 	if (pid == -1)
 		return (-1);
 	if (pid == 0)
-		execve(fp, av, env);
+        if (env)
+		    execve(fp, av, env);
 	waitpid(pid, NULL, 0);
 	return (0);
 }

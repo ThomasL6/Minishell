@@ -13,7 +13,7 @@ void    add_link(t_env **chain, char *env)
     link->next = NULL;
     link->name = ft_strjoin(ft_dup_name(env), "=");
     link->value = ft_dup_value(env);
-	if (ft_strcmp(link->name, "SHLVL") == 0)
+	if (ft_strcmp(link->name, "SHLVL=") == 0)
     	link->value = ft_shlvl_var(link->value);
     if (*chain == NULL)
     {

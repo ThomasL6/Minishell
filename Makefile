@@ -32,8 +32,9 @@ SRCS = main.c \
 	builtin/ft_pwd.c \
 	builtin/ft_cd.c \
 	builtin/ft_echo.c \
-	user.c \
+	builtin/ft_unset.c \
 	builtin/ft_export.c \
+	user.c \
 
 
 OBJS = $(SRCS:.c=.o)

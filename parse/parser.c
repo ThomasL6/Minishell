@@ -12,42 +12,86 @@
 
 #include "../include/minishell.h"
 
+// int	countwords(char const *str, int count, int inword, int insidequotes)
+// {
+// 	while (*str) 
+// 	{
+// 		if (*str == ' ' || *str == '\t' || *str == '\n')
+// 		{
+// 			if (!insidequotes) 
+// 				inword = 0;
+// 		} 
+// 		else if (*str == '\"') 
+// 		{
+// 			insidequotes = !insidequotes;
+// 			if (!insidequotes && inword == 0)
+// 			{
+// 				inword = 1;
+// 				count++;
+// 			}
+// 		}
+// 		else if (*str == '\'') 
+// 		{
+// 			insidequotes = !insidequotes;
+// 			if (!insidequotes && inword == 0)
+// 			{
+// 				inword = 1;
+// 				count++;
+// 			}
+// 		}
+// 		else if (inword == 0)
+// 		{
+// 			inword = 1;
+// 			count++;
+// 		}
+// 		str++;
+// 	}
+// 	return (count);
+// }            greg COMMENT="ca va ?"
+
+#include <string.h>
+
 int	countwords(char const *str, int count, int inword, int insidequotes)
 {
-	while (*str) 
-	{
-		if (*str == ' ' || *str == '\t' || *str == '\n')
-		{
-			if (!insidequotes) 
-				inword = 0;
-		} 
-		else if (*str == '\"') 
-		{
-			insidequotes = !insidequotes;
-			if (!insidequotes && inword == 0)
-			{
-				inword = 1;
-				count++;
-			}
-		}
-		else if (*str == '\'') 
-		{
-			insidequotes = !insidequotes;
-			if (!insidequotes && inword == 0)
-			{
-				inword = 1;
-				count++;
-			}
-		}
-		else if (inword == 0)
-		{
-			inword = 1;
-			count++;
-		}
-		str++;
-	}
-	return (count);
+    while (*str) 
+    {
+        if (*str == ' ' || *str == '\t' || *str == '\n')
+        {
+            if (!insidequotes) 
+                inword = 0;
+        } 
+        else if (*str == '\"') 
+        {
+            insidequotes = !insidequotes;
+            if (insidequotes && inword == 0)
+            {
+                inword = 1;
+                count++;
+            }
+            else if (!insidequotes)
+            {
+                inword = 0;
+            }
+        }
+        else if (*str == '=')
+        {
+            if (inword == 1)
+            {
+                inword = 0;
+            }
+            count++;
+        }
+        else if (inword == 0 && !insidequotes)
+        {
+            inword = 1;
+            count++;
+        }
+        str++;
+    }
+    return count;
 }
+
+
 
 
 char	*ft_strdup(const char *s)
@@ -153,6 +197,17 @@ void	parser(t_base *base)
 		own_cd(base->input);
 	else if (ft_strcmp("export", base->tableau[0]) == 0)
 		ft_export(base);
+	else if (ft_strcmp("unset", base->tableau[0]) == 0)
+		ft_unset(base);
+	else if (ft_strcmp("greg", base->tableau[0]) == 0) // TEST by the all mighty greg
+	{													// TEST by the all mighty greg
+		int i = 0;										// TEST by the all mighty greg
+		while (base->tableau[i])							// TEST by the all mighty greg
+		{
+			printf("%s\n", base->tableau[i]);// TEST by the all mighty greg
+			i++;// TEST by the all mighty greg
+		}// TEST by the all mighty greg
+	}// TEST by the all mighty greg
 	else if (!ft_exec_prog(base->tableau, base))
 		printf("Error - command %s not found\n", base->input);
 	return ;
