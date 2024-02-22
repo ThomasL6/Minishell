@@ -58,6 +58,7 @@ clear :
 
 
 #------------------------------------
+
 fclean : clean
 	rm -f $(NAME)
 	$(MAKE) fclean -C libft
@@ -70,7 +71,6 @@ fclear : clean
 	@echo "fclear"
 
 #------------------------------------
-
 
 re : fclean all
 

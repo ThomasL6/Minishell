@@ -80,7 +80,7 @@ void echo_verif_dollar(t_base *base, int i)
         else
         {
             if (base->tableau[i][j] != '\'' && base->tableau[i][j] != '\"')
-                printf("%c", base->tableau[i][j]);
+                printf("%c|", base->tableau[i][j]);
             j++;
         }
     }

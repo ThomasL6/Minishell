@@ -37,6 +37,3 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	str[i] = '\0';
 	return (str);
 }
-
-// export GREG="comment ca va" MICHEL="Bien et toi"
-// 1      2             3  4   5            6  7

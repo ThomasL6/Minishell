@@ -18,109 +18,114 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-/*---------------------------------------------------------*/
+#include <stdlib.h>
+#include <stdio.h> // For debugging
 
-int	fd_write(int fd, char *str, int flag)
-{
-	write(fd, str, strlen(str));
-	if (flag == 1)
-		write(fd, "\n", 1);
-	return (strlen(str));
+// Function to count words while considering quotes
+int countwords(char const *str) {
+    int count = 0;
+    int insidequotes = 0;
+
+    while (*str) {
+        if (*str == '\"')
+            insidequotes = !insidequotes;
+        else if ((*str == ' ' || *str == '=') && !insidequotes)
+            count++;
+        str++;
+    }
+    return count + 1; // Adding 1 for the last word
 }
 
-// int main2(char **av, int fd, int flag)
-// {
-// 	if (atoi(av[1]) && fd && read(fd, NULL, 1) <= 1)
-// 		flag = 1; // if file is empty
-// 	if (fd == -1)
-// 	{
-// 		printf("Error - file not found\n");
-// 		return (-1);
-// 	}
-// 	else if (av[3])
-// 	{
-// 		fd_write(fd, av[3], flag);
-// 		close(fd);
-// 	}
-// 	else
-// 	{
-// 		printf("Error - no text to write\n");
-// 		return (-2);
-// 	}
-// 	return (0);
-// }
-
-// int	main(int ac, char **av)
-// {
-// 	int fd = -1;
-// 	int flag = 0;
-
-// 	if (ac <= 1)
-// 		printf("Error - no input\n");
-// 	if (atoi(av[1]) == 0)
-// 		fd = open(av[2], O_WRONLY | O_CREAT, 0640);
-// 	else if (atoi(av[1]) == 1)
-// 		fd = open(av[2], O_WRONLY | O_APPEND | O_CREAT, 0640);
-// 	else
-// 	{
-// 		printf("Error - invalide mode\n");
-// 		return (-3);
-// 	}
-// 	main2(av, fd, flag);
-// }
-
-/*---------------------------------------------------------*/
-
-// int	main(void)
-// {
-// 	pid_t pid;
-// 	int	i = 0;
-
-// 	printf("Fork test\n");
-// 	pid = fork();
-// 	if (pid == -1)
-// 		return (-1);
-// 	printf("%d - Fork is in fact alive\n", pid);
-// 	i = 0;
-// 	while (pid == 0 && i < 100)
-// 	{
-// 		s = "a";
-// 		pid = fork();
-// 		printf("child proces is %d\n", pid);
-// 		i++;
-// 	}
-// 	if (pid > 0)
-// 		printf("original proces %d\n", pid);
-// 	return (0);
-// }
-
-int ft_strlen(const char *s)
-{
-	int i;
-
-	i = 0;
-	while (s[i])
-		i++;
-	return (i);
+// Function to get the length of a string
+size_t ft_strlen(const char *s) {
+    size_t len = 0;
+    while (s[len])
+        len++;
+    return len;
 }
 
-int	ft_is_that_char(const char *s, int c)
-{
-	int	i;
+// Function to create a substring
+char *ft_substr(char const *s, unsigned int start, size_t len) {
+    size_t i;
+    char *str;
 
-	i = 0;
-	while (s[i])
-	{
-		if (s[i] == (char)c)
-			return (i);
-		i++;
-	}
-	return (ft_strlen(s));
+    if (!s)
+        return NULL;
+    if (ft_strlen(s) < start)
+        return ft_strdup("");
+    len = (ft_strlen(s + start) < len) ? ft_strlen(s + start) : len;
+    str = (char *)malloc((len + 1) * sizeof(char));
+    if (!str)
+        return NULL;
+    for (i = 0; i < len; i++)
+        str[i] = s[start + i];
+    str[i] = '\0';
+    return str;
 }
 
-int	main(int ac, char **av)
-{
-	printf("%d", ft_is_that_char(av[1], '='));
-	return (0);
+// Function to split string while considering quotes
+char **ft_special_split(char const *s) {
+    int j = 0;
+    int word = countwords(s);
+    char **strs = (char **)malloc((word + 1) * sizeof(char *));
+    if (!strs)
+        return NULL;
+
+    while (*s && j < word) {
+        int size = 0;
+        int insidequotes = 0;
+
+        while (*s == ' ' || *s == '=')
+            s++;
+
+        while (s[size]) {
+            if (s[size] == '\"')
+                insidequotes = !insidequotes;
+            else if ((s[size] == ' ' || s[size] == '=') && !insidequotes)
+                break;
+            size++;
+        }
+
+        if (size == 1 && s[0] == '=' && j > 0) {
+            // If the word is just '=', treat it as a separate word
+            strs[j++] = ft_substr(s, 0, 1);
+        } else if (s - 1 != NULL && *(s - 1) == '=' && j > 0) {
+            // If previous character was '=', concatenate it with the current word
+            char *temp = ft_substr(strs[j - 1], 0, ft_strlen(strs[j - 1]));
+            free(strs[j - 1]);
+            strs[j - 1] = (char *)malloc((size + 2) * sizeof(char));
+            snprintf(strs[j - 1], size + 2, "%s=", temp);
+            free(temp);
+            strs[j++] = ft_substr(s, 0, size);
+        } else if (j > 0 && size > 0 && s[size - 1] == '=') {
+            // If the last character is '=', keep it with the current word
+            strs[j++] = ft_substr(s, 0, size);
+        } else {
+            strs[j++] = ft_substr(s, 0, size);
+        }
+        s += size;
+    }
+    strs[j] = NULL;
+    return strs;
 }
+
+// Test program
+int main() {
+    char input[] = "this is= \"a test\" string with=quotes";
+    char **result = ft_special_split(input);
+    if (result) {
+        for (int i = 0; result[i]; i++) {
+            printf("%s\n", result[i]);
+            free(result[i]);
+        }
+        free(result);
+    }
+    return 0;
+}
+

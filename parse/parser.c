@@ -199,15 +199,6 @@ void	parser(t_base *base)
 		ft_export(base);
 	else if (ft_strcmp("unset", base->tableau[0]) == 0)
 		ft_unset(base);
-	else if (ft_strcmp("greg", base->tableau[0]) == 0) // TEST by the all mighty greg
-	{													// TEST by the all mighty greg
-		int i = 0;										// TEST by the all mighty greg
-		while (base->tableau[i])							// TEST by the all mighty greg
-		{
-			printf("%s\n", base->tableau[i]);// TEST by the all mighty greg
-			i++;// TEST by the all mighty greg
-		}// TEST by the all mighty greg
-	}// TEST by the all mighty greg
 	else if (!ft_exec_prog(base->tableau, base))
 		printf("Error - command %s not found\n", base->input);
 	return ;
