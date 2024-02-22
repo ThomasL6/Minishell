@@ -1,6 +1,5 @@
 #include "../include/minishell.h"
 
-
 int	ft_is_that_char(const char *s, int c) // return len before the char
 {
 	int	i;
@@ -144,20 +143,6 @@ void add_more_link(t_env **chain, char *env)
         link->previous = last_link;
     }
 }
-/*  On commence par allouer de la mémoire pour un nouveau maillon link de type t_env.
-    Si l'allocation échoue, la fonction retourne immédiatement.
-    On initialise le pointeur next de link à NULL.
-    On cherche le caractère '=' dans la chaîne env. Si ce caractère est trouvé, on l'utilise pour diviser la chaîne en deux parties : le nom de la variable et sa valeur.
-    On alloue de la mémoire pour le nom de la variable link->name et on y copie la partie de la chaîne env avant le '='.
-    Si la valeur de la variable commence par une double quote '"', on cherche la fin de la double quote dans la chaîne. 
-	Si elle est trouvée, on alloue de la mémoire pour link->value et on y copie la partie de la chaîne entre les deux double quotes, y compris les quotes.
-	Sinon, on copie simplement la partie restante de la chaîne après le '='.
-    Si la valeur de la variable ne commence pas par une double quote, on copie simplement la partie restante de la chaîne après le '='.
-    Si chain est NULL, cela signifie que la liste chaînée est vide. Dans ce cas, on pointe chain vers le nouveau maillon link et on initialise le pointeur previous de link à NULL.
-    Si chain n'est pas NULL, cela signifie que la liste chaînée contient déjà des maillons.
-	On parcourt alors la liste jusqu'au dernier maillon, puis on relie le nouveau maillon link à la fin de la liste en mettant à jour les pointeurs next et previous appropriés.*/
-
-
 void	ft_putstr(char *str)
 {
 	int i;
@@ -175,37 +160,44 @@ void	ft_putstr(char *str)
 
 void print_list_env_export(t_base *base)
 {
-	int argc = ft_tablen(base->env_old);
-	char **argv = base->env_old;
+    int argc = ft_tablen(base->env_old);
+    char **argv = base->env_old;
 
-	int		i2;
-	int		i1;
-	char	*tmp;
+    int i2;
+    int i1;
+    char *tmp;
 
-	i2 = argc;
-	i1 = 1;
+    i2 = argc;
+    i1 = 1;
 
-	while (++i1 <= argc)
-	{
-		i2 = 1;
-		while (++i2 <= argc - 1)
-		{
-			if (ft_strcmp(argv[i2], argv[i2 - 1]) < 0)
-			{
-				tmp = argv[i2];
-				argv[i2] = argv[i2 - 1];
-				argv[i2 - 1] = tmp;
-			}
-		}
-	}
-	i1 = 0;
-	while (++i1 < argc)
-		ft_putstr(argv[i1]);
+    while (++i1 <= argc)
+    {
+        i2 = 1;
+        while (++i2 <= argc - 1)
+        {
+            if (ft_strcmp(argv[i2], argv[i2 - 1]) < 0)
+            {
+                tmp = argv[i2];
+                argv[i2] = argv[i2 - 1];
+                argv[i2 - 1] = tmp;
+            }
+        }
+    }
 
+    i1 = 0;
+    while (++i1 < argc)
+    {
+        if (i1 > 1 && ft_strchr(argv[i1 - 1], '=') && ft_strchr(argv[i1], '='))
+            printf("%s", argv[i1]);
+        else if (ft_strchr(argv[i1], '='))
+            printf("%s", argv[i1]);
+        else
+            printf("\n%s", argv[i1]);
+    }
 }
 
-// Function to count words while considering quotes
-int ft_super_countwords(char const *str) {
+int ft_super_countwords(char const *str)
+{
     int count = 0;
     int insidequotes = 0;
 
@@ -216,17 +208,16 @@ int ft_super_countwords(char const *str) {
             count++;
         str++;
     }
-    return count + 1; // Adding 1 for the last word
+    return (count + 1);
 }
 
-// Function to get the length of a string
-size_t ft_strlen(const char *s) {
+size_t ft_strlen(const char *s)
+{
     size_t len = 0;
     while (s[len])
         len++;
     return len;
 }
-
 
 char **ft_super_split(char const *s)
 {
@@ -236,44 +227,34 @@ char **ft_super_split(char const *s)
     if (!strs)
         return NULL;
 
-    while (*s && j < word) {
+    while (*s && j < word)
+	{
         int size = 0;
         int insidequotes = 0;
 
-        while (*s == ' ' || *s == '=')
+        while (*s == ' ')
             s++;
-
-        while (s[size]) {
+        while (s[size])
+		{
             if (s[size] == '\"')
                 insidequotes = !insidequotes;
-            else if ((s[size] == ' ' || s[size] == '=') && !insidequotes)
+            else if (s[size] == ' ' && !insidequotes)
                 break;
             size++;
         }
-
-        if (size == 1 && s[0] == '=' && j > 0) {
-            // If the word is just '=', treat it as a separate word
-            strs[j++] = ft_substr(s, 0, 1);
-        } else if (s - 1 != NULL && *(s - 1) == '=' && j > 0) {
-            // If previous character was '=', concatenate it with the current word
-            char *temp = ft_substr(strs[j - 1], 0, ft_strlen(strs[j - 1]));
-            free(strs[j - 1]);
-            strs[j - 1] = (char *)malloc((size + 2) * sizeof(char));
-            snprintf(strs[j - 1], size + 2, "%s=", temp);
-            free(temp);
-            strs[j++] = ft_substr(s, 0, size);
-        } else if (j > 0 && size > 0 && s[size - 1] == '=') {
-            // If the last character is '=', keep it with the current word
-            strs[j++] = ft_substr(s, 0, size);
-        } else {
-            strs[j++] = ft_substr(s, 0, size);
-        }
+        if (j > 0 && *(s - 1) == '=' && size == 0)
+		{
+            size++;
+            strs[j] = ft_substr(s - 1, 0, size);
+        } 
+		else
+            strs[j] = ft_substr(s, 0, size);
+        j++;
         s += size;
     }
     strs[j] = NULL;
-    return strs;
+    return (strs);
 }
-
 
 int find_that_char(char *s, char c)
 {
