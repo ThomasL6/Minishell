@@ -1,9 +1,8 @@
 #include "../include/minishell.h"
 
-void remove_link(t_env **chain, char *var_name, t_base *base)
+void remove_link(t_env **chain, char *var_name)
 {
     t_env *link;
-	int i = 0;
 
 	link = *chain;
     while (link != NULL)
@@ -21,27 +20,31 @@ void remove_link(t_env **chain, char *var_name, t_base *base)
             free(link->name);
             free(link->value);
             free(link);
-			while (base->env_old[i])
-			{
-				if (base->env_old[i] != NULL && var_name != NULL)
-				{
-				    size_t index = ft_is_that_char(var_name, '=');
-				    if (index < strlen(var_name) && index < strlen(base->env_old[i]))
-				    {
-				        if (ft_strncmp(var_name, base->env_old[i], index) == 0)
-				        {
-							ft_bzero(base->env_old[i], \
-							ft_strlen(base->env_old[i] + 1));
-							base->env_old[i] = NULL;
-				        }
-					}
-				}
-				i++;
-       		}
             return;
     	}
         link = link->next;
 	}
+}
+
+void remove_old_env(t_base *base, char *var_name) {
+    int i = 0;
+    int shift = 0;
+
+    while (base->env_old[i]) 
+	{
+        if (ft_strncmp(var_name, base->env_old[i],
+                ft_is_that_char(var_name, '=')) == 0)
+		{
+            ft_bzero(base->env_old[i], ft_strlen(base->env_old[i]));
+            shift = 1;
+        } 
+		else if (shift)
+		{
+            base->env_old[i - 1] = base->env_old[i];
+            base->env_old[i] = NULL;
+        }
+        i++;
+    }
 }
 
 void ft_unset(t_base *base)
@@ -52,7 +55,8 @@ void ft_unset(t_base *base)
 	printf("%s\n", base->input);
 	while (base->tableau[i])
 	{
-		remove_link(&base->env, base->tableau[i], base);
+		remove_link(&base->env, base->tableau[i]);
+		remove_old_env(base, base->tableau[i]);
 		i++;
 	}
 }

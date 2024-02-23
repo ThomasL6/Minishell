@@ -229,7 +229,6 @@ int ft_exec_prog(char **av, t_base *base)
 		printf("Failed to find executable\n");
 		return (0);
 	}
-	//printf("%s\n", fp);
 	ft_exec(fp, av, base->env_old);
 	//perror("execve failed");
 	return (1);

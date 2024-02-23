@@ -25,6 +25,7 @@ SRCS = main.c \
 	parse/parser_utils.c \
 	utils.c \
 	utils2.c \
+	utils3.c \
 	check/c_quote.c \
 	check/c_pipes.c \
 	lists/listchained.c \
@@ -33,7 +34,9 @@ SRCS = main.c \
 	builtin/ft_cd.c \
 	builtin/ft_echo.c \
 	builtin/ft_unset.c \
-	builtin/ft_export.c \
+	builtin/export/ft_export.c \
+	builtin/export/export_utils.c \
+	builtin/export/export_utils1.c \
 	user.c \
 
 

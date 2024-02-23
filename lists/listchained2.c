@@ -51,20 +51,21 @@ void    initial_chain(t_env **chain, char **env)
 void	print_list_env(t_env *env_struct)
 {
 	if (!env_struct)
-	{
-		printf("error - print list not there");
 		return ;
-	}
 	while (env_struct)
 	{
         if (env_struct->name[ft_strlen(env_struct->name) - 1] == '=')
         {
 
-		    if (env_struct->name && env_struct->value) 
-			    printf("%s%s\n", env_struct->name, env_struct->value); // verifier si il y a des "" au debut et a la fin et ne pas els ecrire si il sont la
-		    else    
-			    printf("name and value not set");
-		    env_struct = env_struct->next;
+		    if (env_struct->name && env_struct->value)
+            {
+                ft_putstr_fd(env_struct->name, 0);
+                ft_putstr_fd(env_struct->value, 0);
+                ft_putstr_fd("\n", 0);
+            }
+            else
+                ft_putstr_fd("name and value not set\n", 0);    
+            env_struct = env_struct->next;
         }
         else
             env_struct = env_struct->next;

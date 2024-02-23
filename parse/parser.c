@@ -12,45 +12,6 @@
 
 #include "../include/minishell.h"
 
-// int	countwords(char const *str, int count, int inword, int insidequotes)
-// {
-// 	while (*str) 
-// 	{
-// 		if (*str == ' ' || *str == '\t' || *str == '\n')
-// 		{
-// 			if (!insidequotes) 
-// 				inword = 0;
-// 		} 
-// 		else if (*str == '\"') 
-// 		{
-// 			insidequotes = !insidequotes;
-// 			if (!insidequotes && inword == 0)
-// 			{
-// 				inword = 1;
-// 				count++;
-// 			}
-// 		}
-// 		else if (*str == '\'') 
-// 		{
-// 			insidequotes = !insidequotes;
-// 			if (!insidequotes && inword == 0)
-// 			{
-// 				inword = 1;
-// 				count++;
-// 			}
-// 		}
-// 		else if (inword == 0)
-// 		{
-// 			inword = 1;
-// 			count++;
-// 		}
-// 		str++;
-// 	}
-// 	return (count);
-// }            greg COMMENT="ca va ?"
-
-#include <string.h>
-
 int	countwords(char const *str, int count, int inword, int insidequotes)
 {
     while (*str) 
@@ -181,7 +142,6 @@ void	get_input_tab(t_base *base)
 	}
 }
 
-
 void	parser(t_base *base)
 {
 	get_input_tab(base);
@@ -199,6 +159,12 @@ void	parser(t_base *base)
 		ft_export(base);
 	else if (ft_strcmp("unset", base->tableau[0]) == 0)
 		ft_unset(base);
+	else if (ft_strcmp("exit", base->tableau[0]) == 0)
+	{
+		printf("exit not free'd\n");
+		exit_prog(0, base->env);
+		exit(1273);
+	}
 	else if (!ft_exec_prog(base->tableau, base))
 		printf("Error - command %s not found\n", base->input);
 	return ;

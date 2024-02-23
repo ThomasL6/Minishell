@@ -79,7 +79,7 @@ char	**ft_special_split(char const *s)
 	j = -1;
 	size = 0;
 	word = countwords(s, 0, 0, 0);
-	printf("word = %d\n", word);
+	//printf("word = %d\n", word);
 	strs = (char **)malloc((word + 1) * sizeof(char *));
 	if (!strs)
 		return (NULL);

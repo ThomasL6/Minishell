@@ -14,6 +14,7 @@
 # define MINISHELL_H
 
 /*--include--*/
+#include <string.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -28,6 +29,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <dirent.h>
+
 /*--macro--*/
 #define PATH_MAX 4096
 
@@ -49,6 +51,10 @@ typedef struct s_base
 	char	*user;
 	char	*cur_pwd;
 	char 	**env_old;
+
+	int		pipe;			// not currently used, for pipe implementation
+	int 	**fd;			// not currently used, for pipe implementation
+	int		return_value;	// not currently used, for $? implementation
 
 	t_env		*env;
 }				t_base;
@@ -106,7 +112,7 @@ void	initial_list(t_env **env, char **variable_env);
 char	**ft_separ(char *s, char c);
 
 		/*parser_error*/
-	void	message_error(char *s, int flag);
+void	message_error(char *s, int flag);
 int		chk_directory2(char *str, int i);
 int		chk_directory(t_base *base);
 
@@ -152,8 +158,18 @@ int		ft_export(t_base *base);
 
 char	*ft_strndup(const char *s, int n);
 void 	ft_unset(t_base *base);
-int	ft_tablen(char **tab);
-int	ft_is_that_char(const char *s, int c);
-
+int		ft_tablen(char **tab);
+int		ft_is_that_char(const char *s, int c);
+void	remove_old_env(t_base *base, char *var_name);
+int		there_is_equal(char *s);
+int 	find_that_char(char *s, char c);
+void	sorted(int argc, char **argv);
+void 	add_more_link(t_env **chain, char *env);
+void 	update_more_link(t_env *chain, char *env);
+t_env	*get_link(t_env *chain, char *env);
+int		link_already_exist(t_env *chain, char *env);
+char 	**ft_super_split(char const *s);
+int 	ft_super_countwords(char const *str);
+int 	check_if_storable(char *s);
 
 #endif
