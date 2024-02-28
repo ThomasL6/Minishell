@@ -1,233 +1,171 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   redirection.c                                      :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: thlefebv <marvin@42.fr>                    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/13 09:51:32 by thlefebv          #+#    #+#             */
-/*   Updated: 2024/02/13 09:51:34 by thlefebv         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+// /* ************************************************************************** */
+// /*                                                                            */
+// /*                                                        :::      ::::::::   */
+// /*   exec.c                                             :+:      :+:    :+:   */
+// /*                                                    +:+ +:+         +:+     */
+// /*   By: vamologl <marvin@42.fr>                    +#+  +:+       +#+        */
+// /*                                                +#+#+#+#+#+   +#+           */
+// /*   Created: 2024/02/19 11:25:18 by vamologl          #+#    #+#             */
+// /*   Updated: 2024/02/19 11:25:28 by vamologl         ###   ########.fr       */
+// /*                                                                            */
+// /* ************************************************************************** */
 
-#include "include/minishell.h"
-
-// int	fd_write(int fd, char *str, int flag)
+// #include "include/minishell.h"
+// void	free_tab(char **tab)
 // {
-// 	write(fd, str, strlen(str));
-// 	if (flag == 1)
-// 		write(fd, "\n", 1);
-// 	return (strlen(str));
+// 	int	i;
+
+// 	i = 0;
+// 	while (tab && tab[i])
+// 	{
+// 		free(tab[i]);
+// 		i++;
+// 	}
+// 	free(tab);
 // }
 
-// int main2(char **av, int fd, int flag)
+// char	*get_my_env(char *name, char **env)
 // {
-// 	if (atoi(av[1]) && fd && read(fd, NULL, 1) <= 1)
-// 		flag = 1; // if file is empty
-// 	if (fd == -1)
+// 	int		i;
+// 	char	*ret;
+// 	char	**str_env;
+
+// 	i = 0;
+// 	while (env[i])
 // 	{
-// 		printf("Error - file not found\n");
-// 		return (-1);
+// 		str_env = ft_split(env[i], '=');
+// 		if (str_env && ft_strncmp(name, str_env[0], ft_strlen(str_env[0])) == 0)
+// 		{
+// 			if (str_env[1] == NULL)
+// 				continue ;
+// 			ret = ft_strdup(str_env[1]);
+// 			free_tab(str_env);
+// 			return (ret);
+// 		}
+// 		i++;
+// 		free_tab(str_env);
 // 	}
-// 	else if (av[3])
-// 	{
-// 		fd_write(fd, av[3], flag);
-// 		close(fd);
-// 	}
-// 	else
-// 	{
-// 		printf("Error - no text to write\n");
-// 		return (-2);
-// 	}
-// 	return (0);
+// 	return (NULL);
 // }
 
-// int	main(int ac, char **av)
-// {
-// 	int fd = -1;
-// 	int flag = 0;
 
-// 	if (ac <= 1)
-// 		printf("Error - no input\n");
-// 	if (atoi(av[1]) == 0)
-// 		fd = open(av[2], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-// 	else if (atoi(av[1]) == 1)
-// 		fd = open(av[2], O_WRONLY | O_APPEND | O_CREAT, 0644);
-// 	else
-// 	{
-// 		printf("Error - invalide mode\n");
-// 		return (-3);
-// 	}
-// 	main2(av, fd, flag);
+// static char    *build_exec_path(char *path, char *cmd)
+// {
+//     char    *exec_path;
+//     char    *tmp;
+
+//     exec_path = ft_strjoin(path, "/");
+//     tmp = exec_path;
+//     exec_path = ft_strjoin(exec_path, cmd);
+//     free(tmp);
+//     return (exec_path);
 // }
 
-// int	ft_find_redirection(char const *s, int i)
+// char    *get_path_tab(char *input, char **env)
 // {
-// 	if (s[i] == '>' && s[i])
-// 	{
-// 		if (s[i + 1] == '>')
-// 			return (2);
-// 		return (1);
-// 	}
-// 	else if (s[i] == '<' && s[i])
-// 	{
-// 		if (s[i + 1] == '<')
-// 			return (4);
-// 		return (3);
-// 	}
-// 	return (0);
-// }
-// int ft_redir(t_base *base)
-// {
-//     char *str;
-//     int fd;
-//     int i;
-//     int symb;
+//     char    **path;
+//     char    **s_cmd;
+//     char    *exec_path;
+//     int        i;
 
-//     // Initialisation
+//     if (access(input, F_OK | X_OK) == 0)
+//         return (ft_strdup(input));
+//     path = ft_split(get_my_env("PATH=", env), ':');
+//     s_cmd = ft_split(input, ' ');
 //     i = 0;
-//     str = base->input;
-
-//     // Trouver le type de redirection
-//     symb = ft_find_redirection(str, i);
-
-//     // Parcourir la chaîne pour trouver la redirection
-//     while (str[i])
+//     while (path && path[i])
 //     {
-//         if (symb == 1 || symb == 2)
+//         exec_path = build_exec_path(path[i], s_cmd[0]);
+//         if (access(exec_path, F_OK | X_OK) == 0)
 //         {
-//             // Extraire la commande et les arguments
-//             char *command = strdup(str); // Dupliquer la chaîne pour la manipulation
-//             char *token = strtok(command, " "); // Diviser la chaîne en tokens
-
-//             // Exécuter la commande avec execvp
-//             if (execvp(token, &str) == -1)
-//             {
-//                 perror("Error executing command");
-//                 free(command);
-//                 return (-1);
-//             }
-
-//             // Libérer la mémoire allouée pour la duplication de la chaîne
-//             free(command);
-            
-//             // Ouvrir le fichier en fonction du type de redirection
-//             if (symb == 1)
-//                 fd = open(str + i + 1, O_WRONLY | O_CREAT | O_TRUNC, 0644); // Redirection >
-//             else if (symb == 2)
-//                 fd = open(str + i + 2, O_WRONLY | O_CREAT | O_APPEND, 0644); // Redirection >>
-            
-//             // Vérifier l'ouverture du fichier
-//             if (fd == -1)
-//             {
-//                 perror("Error opening file");
-//                 return (-1);
-//             }
-
-//             // Rediriger stdout vers le fichier
-//             if (dup2(fd, STDOUT_FILENO) == -1)
-//             {
-//                 perror("Error redirecting stdout");
-//                 close(fd);
-//                 return (-1);
-//             }
-
-//             // Fermer le descripteur de fichier du fichier ouvert
-//             close(fd);
-
-//             // Arrêter la recherche de redirections après avoir trouvé une redirection
-//             break;
+//             free_tab(s_cmd);
+//             free_tab(path);
+//             return (exec_path);
 //         }
+//         free(exec_path);
 //         i++;
 //     }
+//     free_tab(s_cmd);
+//     free_tab(path);
+//     return (NULL);
+// }
+// int	ft_strcmp(char *s1, char *s2)
+// {
+// 	int	i = 0;
 
+// 	while (s1[i] && s2[i])
+// 	{
+// 		if (s1[i] != s2[i])
+// 			break;
+// 		i++;
+// 	}
+// 	return (s1[i] - s2[i]);
+// }
+
+// int	ft_find_redirection(char *s)
+// {
+// 	if (ft_strcmp(s, ">") == 0)
+// 		return (1);
+// 	else if (ft_strcmp(s, ">>") == 0)
+// 		return (2);
+// 	else if (ft_strcmp(s, "<") == 0)
+// 		return (3);
+// 	else if (ft_strcmp(s, "<<") == 0)
+// 		return (4);
+// 	return (0);
+// }
+
+
+// int	ft_exec(char *fp, char **av, char **env)
+// {
+// 	pid_t pid;
+
+// 	pid = fork();
+// 	if (pid == -1)
+// 		return (-1);
+// 	if (pid == 0)
+//         if (env)
+// 		    execve(fp, av, env);
+// 	waitpid(pid, NULL, 0);
+// 	return (0);
+// }
+
+// int ft_redir(char **argv, int argc)
+// {
+//     int fd;
+//     int symb;
+
+//     symb = ft_find_redirection(argv[2]);
+// 	if (symb == 1 || symb == 2)
+// 	{
+// 		if (symb == 1)
+// 			fd = open(argv[3] , O_WRONLY | O_CREAT | O_TRUNC, 0644); // changer le 3 par une variable qui trouve le nom du fichier ( arg apres la redir)
+// 		else if (symb == 2)
+// 			fd = open(argv[3], O_WRONLY | O_CREAT | O_APPEND, 0644);
+// 		if (fd == -1)
+// 		{
+// 			perror("Error opening file");
+// 			return (-1);
+// 		}
+// 		dup2(fd, STDOUT_FILENO);
+// 		execve;
+// 		dup2(STDOUT_FILENO, 1);
+// 		close(fd);
+// 	}
 //     return 0;
 // }
 
 
-// int main(void)
+// int main(int arc, char **arv)
 // {
-// 	t_base base;
-// 	base.input = "commande > fichier.txt"; // exemple d'entrée avec redirection
+// 	char *argv[] = {"./a.out", arv[1], arv[2], arv[3]};
+// 	int argc = 3;
 
-// 	if (ft_redir(&base) == -1)
+// 	if (ft_redir(argv, argc) == -1)
 // 	{
 // 		fprintf(stderr, "Redirection failed\n");
 // 		exit(EXIT_FAILURE);
 // 	}
-
-// 	// Votre code pour exécuter la commande avec redirection ici
-
 // 	return (0);
 // }
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/wait.h>
-
-// Fonction de redirection de la sortie de la commande vers un fichier
-void execute_with_redirection(char *command, char *output_file, char *redirection_symbol) {
-    // Créer un processus enfant
-    pid_t pid = fork();
-    
-    if (pid == -1) {
-        perror("fork");
-        exit(EXIT_FAILURE);
-    } else if (pid == 0) {
-        // Processus enfant
-        
-        // Ouvrir le fichier de sortie
-        int fd;
-        if (strcmp(redirection_symbol, ">") == 0) {
-            fd = open(output_file, O_WRONLY | O_CREAT | O_TRUNC, 0644); // Redirection >
-        } else if (strcmp(redirection_symbol, ">>") == 0) {
-            fd = open(output_file, O_WRONLY | O_CREAT | O_APPEND, 0644); // Redirection >>
-        } else {
-            fprintf(stderr, "Invalid redirection symbol: %s\n", redirection_symbol);
-            exit(EXIT_FAILURE);
-        }
-        
-        if (fd == -1) {
-            perror("open");
-            exit(EXIT_FAILURE);
-        }
-        
-        // Rediriger stdout vers le fichier
-        if (dup2(fd, STDOUT_FILENO) == -1) {
-            perror("dup2");
-            close(fd);
-            exit(EXIT_FAILURE);
-        }
-        
-        // Fermer le descripteur de fichier
-        close(fd);
-        
-        // Exécuter la commande
-        execlp(command, command, NULL);
-        
-        // Si execlp retourne, cela signifie qu'il y a eu une erreur
-        perror("execlp");
-        exit(EXIT_FAILURE);
-    } else {
-        // Processus parent
-        // Attendre que le processus enfant se termine
-        int status;
-        waitpid(pid, &status, 0);
-    }
-}
-
-int main(int argc, char *argv[]) {
-    // Vérifier le nombre d'arguments
-    if (argc != 4) {
-        fprintf(stderr, "Usage: %s <command> <redirection_symbol> <output_file>\n", argv[0]);
-        exit(EXIT_FAILURE);
-    }
-    
-    // Appeler la fonction de redirection avec les arguments spécifiés
-    execute_with_redirection(argv[1], argv[3], argv[2]);
-    
-    return 0;
-}

@@ -62,7 +62,7 @@ int ft_redir(t_base *base)
 
     i = 0;
     str = base->input;
-    symb = ft_find_redirection(&str[i], i);
+    symb = ft_find_redirection(&str[i]);
     while (str[i])
     {
         if (symb == 1)
@@ -73,8 +73,7 @@ int ft_redir(t_base *base)
                 perror("Error opening file");
                 return (-1);
             }
-            // Rediriger stdout vers le fichier
-            if (dup2(fd, STDOUT_FILENO) == -1)
+            if (dup2(fd, STDOUT_FILENO) == -1)// Rediriger stdout vers le fichier
             {
                 perror("Error redirecting stdout");
                 close(fd);
@@ -91,8 +90,7 @@ int ft_redir(t_base *base)
                 perror("Error opening file");
                 return (-1);
             }
-            // Rediriger stdout vers le fichier
-            if (dup2(fd, STDOUT_FILENO) == -1)
+            if (dup2(fd, STDOUT_FILENO) == -1)// Rediriger stdout vers le fichier
             {
                 perror("Error redirecting stdout");
                 close(fd);
@@ -105,6 +103,30 @@ int ft_redir(t_base *base)
     }
     return (0);
 }
+// int ft_redir(char **argv, int argc)
+// {
+//     int fd;
+//     int symb;
+
+//     symb = ft_find_redirection(argv[2]);
+// 	if (symb == 1 || symb == 2)
+// 	{
+// 		if (symb == 1)
+// 			fd = open(argv[3] , O_WRONLY | O_CREAT | O_TRUNC, 0644); // changer le 3 par une variable qui trouve le nom du fichier ( arg apres la redir)
+// 		else if (symb == 2)
+// 			fd = open(argv[3], O_WRONLY | O_CREAT | O_APPEND, 0644);
+// 		if (fd == -1)
+// 		{
+// 			perror("Error opening file");
+// 			return (-1);
+// 		}
+// 		dup2(fd, STDOUT_FILENO);
+// 		execve;
+// 		dup2(STDOUT_FILENO, 1);
+// 		close(fd);
+// 	}
+//     return 0;
+// }
 
 //penser a faire un return error
 void	free_tab(char **tab)

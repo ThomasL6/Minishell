@@ -14,20 +14,16 @@ int	check_quote(const char *s, int i, char c)
 	return (len + 1);
 }
 
-int	ft_find_redirection(char const *s, int i)
+int	ft_find_redirection(char  *s)
 {
-	if (s[i] == '>' && s[i])
-	{
-		if (s[i + 1] == '>')
-			return (2);
+	if (ft_strcmp(s, ">") == 0)
 		return (1);
-	}
-	else if (s[i] == '<' && s[i])
-	{
-		if (s[i + 1] == '<')
-			return (4);
+	else if (ft_strcmp(s, ">>") == 0)
+		return (2);
+	else if (ft_strcmp(s, "<") == 0)
 		return (3);
-	}
+	else if (ft_strcmp(s, "<<") == 0)
+		return (4);
 	return (0);
 }
 
@@ -45,13 +41,13 @@ int	where_is_equal(const char *s, int i) // return len before the char
 	return (ft_strlen(s));
 }
 
-int	ft_special_lword(char const *s, int i)
+int	ft_special_lword(char *s, int i)
 {
 	int	size;
 
 	size = 0;
 	if (s[i] == '>' || s[i] == '<')
-		size = ft_find_redirection(s, i); 
+		size = ft_find_redirection(s); 
 	else if (s[i] == '\"' && s[i])
 		size = check_quote(s, i, '\"');
 	else if (s[i] == '\'' && s[i])
@@ -67,7 +63,7 @@ int	ft_special_lword(char const *s, int i)
 }
 
 
-char	**ft_special_split(char const *s)
+char	**ft_special_split(char  *s)
 {
 	int		i;
 	int		j;

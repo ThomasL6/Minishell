@@ -26,7 +26,8 @@ void remove_link(t_env **chain, char *var_name)
 	}
 }
 
-void remove_old_env(t_base *base, char *var_name) {
+void remove_old_env(t_base *base, char *var_name)
+{
     int i = 0;
     int shift = 0;
 

@@ -53,14 +53,15 @@ typedef struct s_base
 	char	*user;
 	char	*cur_pwd;
 	char 	**env_old;
-
+	char	*output_file;
+    char	*redirection_symbol;
+    char	*command;
 	int		pipe;			// not currently used, for pipe implementation
 	int 	**fd;			// not currently used, for pipe implementation
 	int		return_value;	// not currently used, for $? implementation
 
 	t_env		*env;
 }				t_base;
-
 
 void change_pwd(t_base *base); 
 /*--function--*/
@@ -125,7 +126,7 @@ int		ft_strnlen(char *s, int i);
 char	*spaceless_strdup(t_base *base);
 int		only_dots(char *s, int i);
 int		many_dots(char *s, int i);
-int		ft_find_redirection(char const *s, int i);
+int		ft_find_redirection(char *s);
 
 int		ft_redir(t_base *base);
 	/*-check-*/
@@ -147,8 +148,8 @@ int		countwords(char const *str, int count, int inword, int insidequotes);
 void	get_input_tab(t_base *base);
 
 int		double_quote(const char *s, int i);
-int		ft_special_lword(char const *s, int i);
-char	**ft_special_split(char const *s);
+int		ft_special_lword(char  *s, int i);
+char	**ft_special_split(char  *s);
 int		ft_strlen_wo_quote(char *s);
 char	*ft_strstrip(char *s);
 
