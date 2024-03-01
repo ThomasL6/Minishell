@@ -12,49 +12,6 @@
 
 #include "../include/minishell.h"
 
-int	countwords(char const *str, int count, int inword, int insidequotes)
-{
-    while (*str) 
-    {
-        if (*str == ' ' || *str == '\t' || *str == '\n')
-        {
-            if (!insidequotes) 
-                inword = 0;
-        } 
-        else if (*str == '\"') 
-        {
-            insidequotes = !insidequotes;
-            if (insidequotes && inword == 0)
-            {
-                inword = 1;
-                count++;
-            }
-            else if (!insidequotes)
-            {
-                inword = 0;
-            }
-        }
-        else if (*str == '=')
-        {
-            if (inword == 1)
-            {
-                inword = 0;
-            }
-            count++;
-        }
-        else if (inword == 0 && !insidequotes)
-        {
-            inword = 1;
-            count++;
-        }
-        str++;
-    }
-    return count;
-}
-
-
-
-
 char	*ft_strdup(const char *s)
 {
 	size_t	len;
@@ -133,40 +90,78 @@ void	get_input_tab(t_base *base)
 	(void)i;
 	(void)j;
 	j = 0;
-	base->tableau = ft_special_split(base->input);
+	base->tableau[0] = ft_super_split(base->input); // replaced ft_special_split, fuck you special split
 	while (base->tableau[j])
 	{
 		//printf("%s\n", base->tableau[j]);
-		base->tableau[j] = ft_strndup(base->tableau[j], nb_char(base->tableau[j]));
+		base->tableau[0][j] = ft_strndup(base->tableau[0][j], nb_char(base->tableau[0][j]));
 		j++;
 	}
+}
+
+void	error(int i, t_base *base)
+{
+	if (i == 0)
+	{
+		ft_putstr_fd("Error -", 1);
+		ft_putstr_fd(base->tableau[0][0], 1);
+		ft_putstr_fd(" command not found\n", 1);
+	}
+	else if (i == 1)
+	{
+		ft_putstr_fd("exit not free'd\n", 1);
+		exit_prog(0, base->env, base);
+		exit(1273);
+	}
+}
+
+void	fd_change(t_base *base)
+{
+	if (base->tableau[0][1] == NULL)
+	{
+		base->fd_out = 1;
+		return ;
+	}
+	else if (base->tableau[0][2] != NULL)
+	{
+		dprintf(base->fd_out, "Error - too many arguments\n");
+		dprintf(base->ft_custom_exit, "Error - too many arguments\n");
+		return ;
+	}
+	else
+
+		base->fd_out = open(base->tableau[0][1], O_RDWR | O_CREAT | O_TRUNC, 0644);
+	return ;
 }
 
 void	parser(t_base *base)
 {
 	get_input_tab(base);
-	if (ft_strcmp("", base->tableau[0]) == 0)
+	if (ft_strcmp("", base->tableau[0][0]) == 0)
 		return ;
-	else if (ft_strcmp("env", base->tableau[0]) == 0)
-		print_list_env(base->env);
-	else if (ft_strcmp("echo", base->tableau[0]) == 0)
+	else if (ft_strcmp("env", base->tableau[0][0]) == 0)
+		print_list_env(base->env, base);
+	else if (ft_strcmp("echo", base->tableau[0][0]) == 0)
 		own_echo(base);
-	else if (ft_strcmp("pwd", base->tableau[0]) == 0)
+	else if (ft_strcmp("pwd", base->tableau[0][0]) == 0)
 		get_pwd(base);
-	else if (ft_strcmp("cd", base->tableau[0]) == 0)
-		own_cd(base->input);
-	else if (ft_strcmp("export", base->tableau[0]) == 0)
+	else if (ft_strcmp("cd", base->tableau[0][0]) == 0)
+		own_cd(base->input, base);
+	else if (ft_strcmp("export", base->tableau[0][0]) == 0)
 		ft_export(base);
-	else if (ft_strcmp("unset", base->tableau[0]) == 0)
+	else if (ft_strcmp("unset", base->tableau[0][0]) == 0)
 		ft_unset(base);
-	else if (ft_strcmp("exit", base->tableau[0]) == 0)
+	else if (ft_strcmp("exit", base->tableau[0][0]) == 0)
+		error(0, base);
+	else if (ft_strcmp("fdchange", base->tableau[0][0]) == 0) // to remove
+		fd_change(base); // to remove
+	else if (!ft_exec_prog(base->tableau[0], base))
 	{
-		printf("exit not free'd\n");
-		exit_prog(0, base->env);
-		exit(1273);
+		ft_putstr_fd("Error - command not found\n", base->fd_out);
+		ft_putstr_fd(base->tableau[0][0], base->fd_out);
+		ft_putchar_fd('\n', base->fd_out);
+		// printf("Error - command %s not found\n", base->tableau[0][0]);
 	}
-	else if (!ft_exec_prog(base->tableau, base))
-		printf("Error - command %s not found\n", base->input);
 	return ;
 }
 

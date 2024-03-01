@@ -48,7 +48,7 @@ typedef struct s_env
 
 typedef struct s_base
 {
-	char	**tableau;
+	char	***tableau;
 	char	*input;
 	char	*user;
 	char	*cur_pwd;
@@ -56,6 +56,10 @@ typedef struct s_base
 	char	*output_file;
     char	*redirection_symbol;
     char	*command;
+
+	int		fd_out;
+	int		ft_custom_exit;
+
 	int		pipe;			// not currently used, for pipe implementation
 	int 	**fd;			// not currently used, for pipe implementation
 	int		return_value;	// not currently used, for $? implementation
@@ -71,15 +75,15 @@ void change_pwd(t_base *base);
 void	ft_free_tab(char **str);
 void	modif_path(t_base *base);
 void	modif_pwd(t_base *base, char *s);
-void	own_cd(char *str); //, t_base *base);
+void    own_cd(char *str, t_base *base); //, t_base *base);
 	/*pwd*/
 int	get_pwd(t_base *base);
 
 	/*-builtin-*/
 	/*-exit-*/
-void	exit_prog(int i, void *ptr);
-void	free_chain(t_env **chain);
-void	ft_exit(t_env **chain);
+void	exit_prog(int i, void *ptr, t_base *base);
+void    free_chain(t_env **chain, t_base *base);
+void	ft_exit(t_base *base);
 
 	/*-utils-*/
 int		cmp_len(char *s1, char *s2);
@@ -98,14 +102,14 @@ int		ft_strcmp(char *s1, char *s2);
 int		ft_strcmp(char *s1, char *s2);
 char	*ft_shlvl_var(char *s2);
 t_env	*find_last(t_env *head);
-void    print_chain(t_env *chain);
+void    print_chain(t_env *chain, t_base *base);
 char    *get_var_env(t_env *chain, char *name);
 
 		/*listchained2*/
 void    add_link(t_env **chain, char *env);
 void    add_more_link(t_env **chain, char *env);
-void    initial_chain(t_env **chain, char **env);
-void	print_list_env(t_env *env_struct);
+void    initial_chain(t_env **chain, char **env, t_base *base);
+void	print_list_env(t_env *env_struct, t_base *base);
 
 	/*-list-*/
 void	initial_list(t_env **env, char **variable_env);
@@ -128,7 +132,7 @@ int		only_dots(char *s, int i);
 int		many_dots(char *s, int i);
 int		ft_find_redirection(char *s);
 
-int		ft_redir(t_base *base);
+int		ft_redir(t_base *base, char *fp, char **av, char **tab);
 	/*-check-*/
 		/*c_quote*/
 int		chk_quote(char *s);
@@ -166,13 +170,16 @@ int		ft_is_that_char(const char *s, int c);
 void	remove_old_env(t_base *base, char *var_name);
 int		there_is_equal(char *s);
 int 	find_that_char(char *s, char c);
-void	sorted(int argc, char **argv);
+void	sorted(int argc, char **argv, t_base *base);
 void 	add_more_link(t_env **chain, char *env);
-void 	update_more_link(t_env *chain, char *env);
+void update_more_link(t_env *chain, char *env, t_base *base);
 t_env	*get_link(t_env *chain, char *env);
 int		link_already_exist(t_env *chain, char *env);
 char 	**ft_super_split(char const *s);
 int 	ft_super_countwords(char const *str);
 int 	check_if_storable(char *s);
+
+int ft_strcmp_spe(char *string, char *compared, int srt, int end);
+int is_char_or_num(char c);
 
 #endif

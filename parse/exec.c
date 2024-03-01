@@ -31,103 +31,6 @@ int fd_write(int fd, char *str, int flag)
     return strlen(str);
 }
 
-// int ft_write_redir(char **av, int fd, int flag)
-// {
-// 	if (atoi(av[1]) && fd && read(fd, NULL, 1) <= 1)
-// 		flag = 1; // if file is empty
-// 	if (fd == -1)
-// 	{
-// 		printf("Error - file not found\n");
-// 		return (-1);
-// 	}
-// 	else if (av[3])
-// 	{
-// 		fd_write(fd, av[3], flag);
-// 		close(fd);
-// 	}
-// 	else
-// 	{
-// 		printf("Error - no text to write\n");
-// 		return (-2);
-// 	}
-// 	return (0);
-// }
-
-int ft_redir(t_base *base)
-{
-    char *str;
-    int fd;
-    int i;
-    int symb;
-
-    i = 0;
-    str = base->input;
-    symb = ft_find_redirection(&str[i]);
-    while (str[i])
-    {
-        if (symb == 1)
-        {
-            fd = open(&str[i], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-            if (fd == -1)
-            {
-                perror("Error opening file");
-                return (-1);
-            }
-            if (dup2(fd, STDOUT_FILENO) == -1)// Rediriger stdout vers le fichier
-            {
-                perror("Error redirecting stdout");
-                close(fd);
-                return (-1);
-            }
-            close(fd); // Fermer le descripteur de fichier du fichier ouvert
-            break; // Arrêter la recherche de redirections après avoir trouvé une redirection >
-        }
-        else if (symb == 2)
-        {
-            fd = open(&str[i], O_WRONLY | O_CREAT | O_APPEND, 0644);
-            if (fd == -1)
-            {
-                perror("Error opening file");
-                return (-1);
-            }
-            if (dup2(fd, STDOUT_FILENO) == -1)// Rediriger stdout vers le fichier
-            {
-                perror("Error redirecting stdout");
-                close(fd);
-                return (-1);
-            }
-            close(fd); // Fermer le descripteur de fichier du fichier ouvert
-            break; // Arrêter la recherche de redirections après avoir trouvé une redirection >>
-        }
-        i++;
-    }
-    return (0);
-}
-// int ft_redir(char **argv, int argc)
-// {
-//     int fd;
-//     int symb;
-
-//     symb = ft_find_redirection(argv[2]);
-// 	if (symb == 1 || symb == 2)
-// 	{
-// 		if (symb == 1)
-// 			fd = open(argv[3] , O_WRONLY | O_CREAT | O_TRUNC, 0644); // changer le 3 par une variable qui trouve le nom du fichier ( arg apres la redir)
-// 		else if (symb == 2)
-// 			fd = open(argv[3], O_WRONLY | O_CREAT | O_APPEND, 0644);
-// 		if (fd == -1)
-// 		{
-// 			perror("Error opening file");
-// 			return (-1);
-// 		}
-// 		dup2(fd, STDOUT_FILENO);
-// 		execve;
-// 		dup2(STDOUT_FILENO, 1);
-// 		close(fd);
-// 	}
-//     return 0;
-// }
-
 //penser a faire un return error
 void	free_tab(char **tab)
 {
@@ -217,22 +120,111 @@ char    *get_path_tab(char *input, char **env)
     return (NULL);
 }
 
-
-
-int	ft_exec(char *fp, char **av, char **env)
+int	is_there_redir(char **s)
 {
-	pid_t pid;
+	int i;
+
+	i = 0;
+	while (s[i])
+	{
+		if (ft_find_redirection(s[i]) == 1)
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+int ft_spe_execve(char *fp, char **av, char **tab, t_base *base)
+{
+	pid_t	pid;
+	int fd_tmp;
 
 	pid = fork();
 	if (pid == -1)
 		return (-1);
 	if (pid == 0)
-        if (env)
-		    execve(fp, av, env);
+	{
+		fd_tmp = dup(1); // fd_tmp = store the current stdout
+		dup2(base->fd_out, 1); //change the current stdout to the file descriptor
+		dprintf(base->ft_custom_exit, "%d\n", base->fd_out); // to remove
+		if (!execve(fp, av, tab))
+		{
+			free_tab(av);
+			close(base->fd_out); // if failed to execute, close the file descriptor
+			dprintf(base->ft_custom_exit, "ft_exec : execve failed\n");
+		}
+		dup2(fd_tmp, 1); // restore the current stdout
+	}
 	waitpid(pid, NULL, 0);
 	return (0);
 }
 
+// faire une fonction get redir qui ouvre fd au type de redir (a la place de while 1)
+// fermer les fd apres
+// le faire foncitonner avec les autre fonction
+
+void ft_basic_redir(char *fp, char **av, char **tab, t_base *base)
+{
+	int i;
+	int fd_tmp;
+	char **tmp;
+	(void)av;
+
+	fd_tmp = base->fd_out;
+	i = 0;
+	tmp = malloc(sizeof(char **) * (ft_tablen(base->tableau[0])));
+	while (ft_strncmp(base->tableau[0][i], ">", ft_strlen(base->tableau[0][i])) != 0 && base->tableau[0][i])
+	{
+		if (base->tableau[0][i + 1] == NULL)
+		{
+			base->fd_out = 1;
+			return ;
+		}
+		tmp[i] = base->tableau[0][i];
+		i++;
+	}
+	tmp[i] = NULL;
+	if (base->tableau[0][i + 1] == NULL)
+	{
+		base->fd_out = 1;
+		free(tmp);
+		return ;
+	}
+	i++;
+	// base->fd_out = open(base->tableau[0][i], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	base->fd_out = open(base->tableau[0][i], O_WRONLY | O_CREAT | O_APPEND, 0644);
+	ft_spe_execve(fp, tmp, tab, base);
+	base->fd_out = fd_tmp;
+}
+
+
+int	ft_exec(char *fp, char **av, char **tab, t_base *base)
+{
+	// int		tmp1;
+	(void)base;
+
+	int i = 0; // to remove
+
+	ft_putstr_fd("in ft_exec\n", base->ft_custom_exit);
+	if (is_there_redir(av))
+		ft_basic_redir(fp, av, tab, base);
+	else
+	{
+		dprintf(base->ft_custom_exit, "about to execute |"); // to remove
+		while (av[i])	 // to remove
+			dprintf(base->ft_custom_exit, "%s ", av[i++]); // to remove
+		dprintf(base->ft_custom_exit, "|\n"); // to remove
+		ft_spe_execve(fp, av, tab, base);
+		ft_putstr_fd("execute done\n", base->ft_custom_exit); // to remove
+	}
+	return (0);
+}
+	/*
+	dup2(fd_out, 1);
+	dup2(fd_in, 0);
+	if (-1 == excve())
+     error
+	*/
 
 int ft_exec_prog(char **av, t_base *base)
 {
@@ -241,17 +233,12 @@ int ft_exec_prog(char **av, t_base *base)
 	fp = get_path_tab(av[0], base->env_old);
 	if(!fp)
 		return(0);
-	if (ft_redir(base) == -1)
-	{
-		printf("Redirection failed\n");
-		return (0);
-	}
 	if (fp == NULL)
 	{
 		printf("Failed to find executable\n");
 		return (0);
 	}
-	ft_exec(fp, av, base->env_old);
+	ft_exec(fp, av, base->env_old, base);
 	//perror("execve failed");
 	return (1);
 }

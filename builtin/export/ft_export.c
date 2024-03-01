@@ -29,7 +29,7 @@ void print_list_env_export(t_base *base)
 	env = base->env_old;
 
 	i = ft_tablen(base->env_old);
-	sorted(i, env);
+	sorted(i, env, base);
 }
 
 size_t ft_strlen(const char *s)
@@ -84,9 +84,9 @@ int	ft_export(t_base *base)
 	{
 		if (check_if_storable(ret[i]) == 0)
 		{
-			ft_putstr_fd("Error export - `", 0);
-			ft_putstr_fd("ret[i]", 0);
-			ft_putstr_fd("\': not a valid identifier\n", 0);
+			ft_putstr_fd("Error export - `", base->fd_out);
+			ft_putstr_fd("ret[i]", base->fd_out);
+			ft_putstr_fd("\': not a valid identifier\n", base->fd_out);
 		}
 		else
 		{
@@ -97,7 +97,7 @@ int	ft_export(t_base *base)
 			}
 			else
 			{
-				update_more_link(base->env, ret[i]);
+				update_more_link(base->env, ret[i], base);
 				update_env_old(base, ret[i]);
 			}
 

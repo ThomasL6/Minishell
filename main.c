@@ -12,7 +12,7 @@
 
 #include "include/minishell.h"
 
-
+int	g_signal = 0;
 
 void	received_signal(int n)
 {
@@ -29,11 +29,6 @@ void	received_signal(int n)
 		rl_replace_line("", 0);
 		rl_on_new_line();
 		rl_redisplay();
-	}
-	else if (n == SIGSEGV) // mem crash should not be there
-	{
-		printf("SIGSEGV -> Fuck you\n");
-		exit(-2147483647);
 	}
 }
 
@@ -63,10 +58,8 @@ int	ft_parser(char *s)
 void    gest_intp(t_base *base)
 {
 	add_history(base->input);
-	if (chk_directory(base) == 0)
-	{
+	if (chk_directory(base) == 0 && base->input != NULL)
 		free(base->input);
-	}
 	parser(base);
 	// while() // -> parcours le tableau jusque end
 	// {
@@ -89,14 +82,17 @@ void	ft_loop(t_base *base)
 	{
 		base->input = readline(base->user);
 		if (base->input == NULL)
-			ft_exit(&base->env);
+		{
+			g_signal = 255;
+			break ;
+			//ft_exit(&base->env);
+		}
 		else if (is_empty(base->input) == 0)
 			continue;
-		gest_intp(base); // go to error in string
+		gest_intp(base);
 	}
+	ft_exit(base);
 }
-
-
 
 int	main(int ac, char **av, char **env)
 {
@@ -105,20 +101,22 @@ int	main(int ac, char **av, char **env)
 	(void)ac;
 	(void)av;
 
-	//base = NULL;
 	signal(SIGINT, &received_signal);
 	signal(SIGTSTP, &received_signal);
 	signal(SIGQUIT, &received_signal);
 	//signal(SIGSEGV, &received_signal); // remove this
 
-
 	base = malloc(sizeof(t_base));
 	base->env_old = env;
-	initial_chain(&base->env, env); // clone env
+	base->tableau = malloc(sizeof(char ***) * 1);
+	base->ft_custom_exit = open("exit.txt", O_CREAT | O_RDWR | O_TRUNC, 0644);
+	ft_putstr_fd("-- opened Minishell --\n", base->ft_custom_exit);
+	initial_chain(&base->env, env, base); // clone env
 	init_user(base);
 	
 	ft_loop(base); // loop
 	rl_clear_history(); // clear historic
+	ft_exit(base); // exit
 
 	return (0);
 }

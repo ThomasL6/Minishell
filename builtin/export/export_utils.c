@@ -1,6 +1,6 @@
 #include "../../include/minishell.h"
 
-void update_more_link(t_env *chain, char *env)
+void update_more_link(t_env *chain, char *env, t_base *base)
 {
 	t_env	*link;
 	if (!chain || !env)
@@ -15,8 +15,8 @@ void update_more_link(t_env *chain, char *env)
 		//printf("Error - link not found\n");
 		return ;
 	}
-	ft_putstr_fd(link->name, 0);
-	ft_putstr_fd("\n", 0);
+	ft_putstr_fd(link->name, base->fd_out);
+	ft_putstr_fd("\n", base->fd_out);
 	link->name = ft_strndup(env, ft_is_that_char(env, '='));
 	if (there_is_equal(env) == 1)
 		link->value = ft_dup_value(env);
@@ -73,7 +73,7 @@ void add_more_link(t_env **chain, char *env)
     }
 }
 
-void	sorted(int argc, char **argv)
+void	sorted(int argc, char **argv, t_base *base)
 {
 	int		i1;
 	int		i2;
@@ -99,9 +99,9 @@ void	sorted(int argc, char **argv)
 	{
 		if (argv[i1][0] != '\0')
 		{
-			ft_putstr_fd("declare -x ", 0);
-			ft_putstr_fd(argv[i1], 0);
-			ft_putstr_fd("\n", 0);
+			ft_putstr_fd("declare -x ", base->fd_out);
+			ft_putstr_fd(argv[i1], base->fd_out);
+			ft_putstr_fd("\n", base->fd_out);
 		}
 		i1++;
 	}

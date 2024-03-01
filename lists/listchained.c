@@ -28,13 +28,15 @@ t_env	*find_last(t_env *head)
 	return (head);
 }
 
-void    print_chain(t_env *chain)
+void    print_chain(t_env *chain, t_base *base)
 {
 	if (NULL == chain)
 		return ;
 	while (chain->next)
 	{
-		printf("%s%s\n", chain->name, chain->value);
+		ft_putstr_fd(chain->name, base->fd_out);
+		ft_putchar_fd('=', base->fd_out);
+		//printf("%s%s\n", chain->name, chain->value);
 		chain = chain->next;
 	}
 }

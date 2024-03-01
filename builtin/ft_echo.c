@@ -12,41 +12,21 @@
 
 #include "../include/minishell.h"
 
-int ft_strcmp_spe(char *string, char *compared, int srt, int end)
+void ft_print_env(t_base *base, char *name, int srt, int end)
 {
-    int i = 0;
-    while (string[srt] == compared[i] && string[srt] != '\0' &&
-           compared[i] != '\0' && srt < end)
-    {
-        i++;
-        srt++;
-    }
-    return (string[srt] - compared[i]);
-}
-
-void ft_print_env(t_env *chain, char *name, int srt, int end)
-{
-    if (NULL == chain)
+    if (NULL == &base->env)
         return;
-    while (chain)
+    while (&base->env)
     {
-        if (ft_strcmp_spe(name, chain->name, srt, end) == 0)
+        if (ft_strcmp_spe(name, base->env->name, srt, end) == 0)
         {
-            printf("%s", chain->value);
+			ft_putstr_fd(base->env->value, base->fd_out);
+            // printf("%s", &base->env->value);
             return;
         }
-        chain = chain->next;
+        base->env = base->env->next;
     }
 }
-
-int is_char_or_num(char c)
-{
-    if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'))
-        return (1);
-    else
-        return (0);
-}
-
 
 int is_env(char *s, t_base *base, int i)
 {
@@ -61,8 +41,8 @@ int is_env(char *s, t_base *base, int i)
 			break ;
     }
     end = i;
-    ft_print_env(base->env, s, srt, end);
-    return (i - srt + 1); // Retourne le nombre de caractères traités
+    ft_print_env(base, s, srt, end);
+    return (i - srt + 1); // Retourne le nombre de caractères traités 
 }
 
 void echo_verif_dollar(t_base *base, int i)
@@ -70,57 +50,74 @@ void echo_verif_dollar(t_base *base, int i)
     int j;
 
 	j = 0;
-    while (base->tableau[i][j])
+    while (base->tableau[0][i][j])
     {
-        if (base->tableau[i][j] == '$' && base->tableau[i][0] != '\'')
+        if (base->tableau[0][i][j] == '$' && base->tableau[0][i][0] != '\'')
         {
             j++;
-            j += is_env(base->tableau[i], base, j);
+            j += is_env(base->tableau[0][i], base, j);
         }
         else
         {
-            if (base->tableau[i][j] != '\'' && base->tableau[i][j] != '\"')
-                printf("%c|", base->tableau[i][j]);
+            if (base->tableau[0][i][j] != '\'' && base->tableau[0][i][j] != '\"')
+				ft_putchar_fd(base->tableau[0][i][j], base->fd_out);
+                // printf("%c", base->tableau[0][i][j]);
             j++;
         }
     }
-    if (base->tableau[i + 1])
-        printf(" ");
+    if (base->tableau[0][i + 1])
+		ft_putchar_fd(' ', base->fd_out);
+        // printf(" ");
 }
 
+void	write_echo(t_base *base, int i, int flag, int mode)
+{
+	if (mode == 0)
+	{
+		if (base->tableau[0][0] && !base->tableau[0][1])
+		{
+			ft_putchar_fd('\n', base->fd_out);
+			// printf("\n");
+			return;
+		}
+	}
+	else if (mode == 1)
+	{
+		while (base->tableau[0][i])
+		{
+			echo_verif_dollar(base, i);
+			i++;
+		}
+		if (flag == 0)
+			ft_putchar_fd('\n', base->fd_out);
+			// printf("\n");
+	}
+}
 
 void own_echo(t_base *base)
 {
-    int flag;
-    int i;
-    
-    flag = 0;
-    i = 1;
-    if (base->tableau[0] && !base->tableau[1])
-    {
-        printf("\n");
-        return;
-    }
-    else if (base->tableau[1])
-    {
-        while (base->tableau[i] && base->tableau[i][0] == '-')
-        {
-            if (strcmp(base->tableau[i], "-n") == 0)
-            {
-                flag = 1;
-                i++;
-            }
-            else
-                break;
-        }
-        while (base->tableau[i])
-        {
-            // printf("is in the if 2\n");
-            echo_verif_dollar(base, i);
-            i++;
-        }
-        if (flag == 0)
-            printf("\n");
-    }
-}
+	int flag;
+	int i;
+	int j;
 
+	flag = 0;
+	i = 1;
+	j = 0;
+	if (base->tableau[0][0] && !base->tableau[0][1])
+		write_echo(base, i, flag, 0);
+	else
+	{
+		if (base->tableau[0][i][j] == '-')
+		{
+			j++;
+			while (base->tableau[0][i][j] == 'n')
+				j++;
+			if (base->tableau[0][i][j] == '\0')
+			{
+				flag = 1;
+				i++;
+			} 
+		}
+	}
+	write_echo(base, i, flag, 1);
+}

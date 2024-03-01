@@ -19,7 +19,9 @@ int	get_pwd(t_base *base)
 	if(getcwd(tmp, PATH_MAX))
 	{
 		base->cur_pwd = tmp;
-		printf("%s\n", base->cur_pwd);
+		ft_putstr_fd(base->cur_pwd, base->fd_out);
+		ft_putchar_fd('\n', base->fd_out);
+		// printf("%s\n", base->cur_pwd);
 		return (1);
 	}
 	return (0);

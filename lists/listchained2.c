@@ -28,14 +28,15 @@ void    add_link(t_env **chain, char *env)
     }
 }
 
-void    initial_chain(t_env **chain, char **env)
+void    initial_chain(t_env **chain, char **env, t_base *base)
 {
     int i;
 
     i = 0;
     if (!env)
     {
-        printf("Env t exist\n");
+        ft_putstr_fd("Env t exist\n", base->fd_out);
+        // printf("Env t exist\n");
         return;
     }
     while (env[i])
@@ -45,10 +46,11 @@ void    initial_chain(t_env **chain, char **env)
         add_link(chain, env[i]);
         i++;
     }
-    printf("chained initialized\n");
+    // printf("chained initialized\n"); // to remove
+    ft_putstr_fd("chained initialized\n", base->fd_out);
 }
 
-void	print_list_env(t_env *env_struct)
+void	print_list_env(t_env *env_struct, t_base *base)
 {
 	if (!env_struct)
 		return ;
@@ -59,12 +61,13 @@ void	print_list_env(t_env *env_struct)
 
 		    if (env_struct->name && env_struct->value)
             {
-                ft_putstr_fd(env_struct->name, 0);
-                ft_putstr_fd(env_struct->value, 0);
-                ft_putstr_fd("\n", 0);
+                ft_putstr_fd(env_struct->name, base->fd_out);
+                //ft_putchar_fd('=', base->fd_out);
+                ft_putstr_fd(env_struct->value, base->fd_out);
+                ft_putstr_fd("\n", base->fd_out);
             }
             else
-                ft_putstr_fd("name and value not set\n", 0);    
+                ft_putstr_fd("name and value not set\n", base->fd_out);    
             env_struct = env_struct->next;
         }
         else
