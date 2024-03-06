@@ -58,7 +58,10 @@ typedef struct s_base
     char	*command;
 
 	int		fd_out;
+	int		fd_in;
 	int		ft_custom_exit;
+	char	*env_path;
+	int		flag_redir;
 
 	int		pipe;			// not currently used, for pipe implementation
 	int 	**fd;			// not currently used, for pipe implementation
@@ -181,5 +184,6 @@ int 	check_if_storable(char *s);
 
 int ft_strcmp_spe(char *string, char *compared, int srt, int end);
 int is_char_or_num(char c);
+char    *get_path_tab(char *input, char **env);
 
 #endif

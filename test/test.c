@@ -11,110 +11,211 @@
 /* ************************************************************************** */
 
 // #include "include/minishell.h"
-#include <stdio.h>
 #include <string.h>
+#include <stddef.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+#include <stdlib.h>
+#include <signal.h>
+#include "../libft/libft.h"
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <dirent.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
-#include <stdlib.h>
-#include <stdio.h> // For debugging
-
-int find_that_char(char *s, char c)
+int ft_super_countwords(const char *s)
 {
-	int i;
+    int count = 0;
+    int inside_word = 0;
+
+    while (*s)
+    {
+        if (*s == ' ')
+            inside_word = 0;
+        else if (inside_word == 0)
+        {
+            inside_word = 1;
+            count++;
+        }
+        s++;
+    }
+    return count;
+}
+
+const char *ft_skip_spaces(const char *s)
+{
+    while (*s && *s == ' ')
+        s++;
+    return s;
+}
+
+char *ft_extract_word(const char *s, int size)
+{
+    char *word = (char *)malloc((size + 1) * sizeof(char));
+    if (!word)
+        return NULL;
+    for (int i = 0; i < size; i++)
+        word[i] = s[i];
+    word[size] = '\0';
+    return word;
+}
+
+int ft_get_word_size(const char *s)
+{
+    int size = 0;
+    int insidequotes = 0;
+
+    while (s[size])
+    {
+        if (s[size] == '\"')
+            insidequotes = !insidequotes;
+        else if (s[size] == ' ' && !insidequotes)
+            break;
+        size++;
+    }
+    return size;
+}
+
+char **ft_super_split(char const *s)
+{
+    int j = 0;
+    int word_count = ft_super_countwords(s);
+    char **strs = (char **)malloc((word_count + 1) * sizeof(char *));
+    if (!strs)
+        return NULL;
+
+    while (*s && j < word_count)
+    {
+        s = ft_skip_spaces(s);
+        int word_size = ft_get_word_size(s);
+        if (j > 0 && *(s - 1) == '=' && word_size == 0)
+            word_size++;
+        strs[j] = ft_extract_word(s, word_size);
+        if (!strs[j])
+        {
+            // Gestion d'erreur : libérer la mémoire allouée précédemment
+            for (int k = 0; k < j; k++)
+                free(strs[k]);
+            free(strs);
+            return NULL;
+        }
+        j++;
+        s += word_size;
+    }
+    strs[j] = NULL;
+    return strs;
+}
+
+int	ft_strncmp(const char *s1, const char *s2, size_t n)
+{
+	size_t	i;
 
 	i = 0;
-	while (s[i])
-	{
-		if (s[i] == c)
-			return (1);
+	while ((unsigned char)s1[i] == s2[i] && (unsigned char)s1[i] != '\0'
+		&& s2[i] != '\0' && i < n - 1)
 		i++;
-	}
-	return (0);
+	if (n > 0)
+		return ((unsigned char)s1[i] - (unsigned char)s2[i]);
+	else
+		return (0);
 }
 
-int ft_strlen(const char *s)
+size_t ft_strlen(const char *s)
 {
-    int i;
-
-    i = 0;
-    while (s[i])
-        i++;
-    return (i);
+    size_t len = 0;
+    while (s[len])
+        len++;
+    return len;
 }
 
-int	ft_is_that_char(const char *s, int c) // return len before the char
-{
-	int	i;
-
-	i = 0;
-	while (s[i] != '\0')
-	{
-		if (s[i] == (char)c)
-			return (i);
-		i++;
-	}
-	return (ft_strlen(s));
-}
-
-
-
-int	ft_isalnum(int c)
-{
-	if (c >= '0' && c <= '9')
-		return (1);
-	else if (c >= 'a' && c <= 'z')
-		return (1);
-	else if (c >= 'A' && c <= 'Z')
-		return (1);
-	return (0);
-}
-
-int check_if_storable(char *s)
+int	nb_char(char *s)
 {
 	int i;
 	int j;
 
+	int	count;
+
 	i = 0;
-	if (!s[0])
-		return (0);
-	else if (s[0] == '=' && s[0])
-		return (0);
-	else if (s[0] >= '0' && s[0] <= '9' && s[0])
-		return (0);
-	else if (find_that_char(s, '=') == 1)
+	j = strlen(s);
+	j--;
+	while ((s[j] == ' ' || s[j] == '\t') && j > 0)
+		j--;
+	if (j < 0)
+		return (-1);
+	while (s[i] && (s[i] == ' ' || s[i] == '\t'))
+		i++;
+	count = 0;
+	while (i <= j)
 	{
-		j = ft_is_that_char(s, '=');
-		if (ft_strlen(s) == j)
-			return (2);
-		while (i < j)
-		{
-			if (ft_isalnum(s[i]) == 0)
-				return (0);
-			else
-				i++;
-		}
+		i++;
+		count++;
 	}
-	return (1);
+	return (count);
 }
 
-int main(int ac, char **av)
+char	*ft_strndup(char *s, int n)
 {
-    int i = 1;
+	size_t	len;
+	int		i;
+	char	*dst;
 
-    while (i < ac)
-    {
-        printf("%d\n", check_if_storable(av[i]));
-        i++;
-    }
-    return (0);
+	len = nb_char((char *)s);
+	i = 0;
+	dst = (char *)malloc(sizeof(char) * (len + 1));
+	if (!dst)
+		return (0);
+	while (s[i] && i <= n)
+	{
+		if (s[i] == ' ' && s[i + 1] == '\0')
+			break;
+		dst[i] = s[i];
+		i++;
+	}
+	dst[i] = '\0';
+//	printf("|%ld|%s|\n",len, dst);
+	return (dst);
+}
+
+
+char	**ok_function(char **tab)
+{
+	int i = 0;
+	char **tmp;
+
+	while (tab[i])
+		i++;
+	if (i < 3)
+		return (NULL);
+	tmp = malloc(sizeof(char **) * 3);
+}
+
+int main(void)
+{
+	char *str;
+	char **tab;
+	char **tmp;
+	int i = 0;
+
+	while (1)
+	{
+		i = 0;
+		str = readline("file-prog ~$ ");
+		tab = ft_super_split(str);
+		tmp = ok_function(tab);
+		while (tmp[i])
+		{
+			printf("%s\n", tmp[i]);
+			i++;
+		}
+		free(tmp);
+		free(str);
+		free(tab);
+	}
 }
 

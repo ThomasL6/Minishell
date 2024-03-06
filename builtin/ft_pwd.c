@@ -14,14 +14,13 @@
 
 int	get_pwd(t_base *base)
 {
-	char tmp[PATH_MAX];
+	char	tmp[PATH_MAX];
 
-	if(getcwd(tmp, PATH_MAX))
+	if (getcwd(tmp, PATH_MAX))
 	{
 		base->cur_pwd = tmp;
 		ft_putstr_fd(base->cur_pwd, base->fd_out);
 		ft_putchar_fd('\n', base->fd_out);
-		// printf("%s\n", base->cur_pwd);
 		return (1);
 	}
 	return (0);
