@@ -25,12 +25,15 @@ SRCS = main.c \
 	builtin/ft_cd.c \
 	builtin/ft_echo.c \
 	builtin/ft_unset.c \
+	builtin/ft_env.c \
 	check/c_quote.c \
 	check/c_pipes.c \
 	lists/listchained.c \
 	lists/listchained2.c \
 	parse/parser.c \
 	parse/exec.c \
+	parse/gest_redir_utils.c \
+	parse/gest_redir.c \
 	parse/parser_error.c \
 	parse/parser_utils2.c \
 	parse/parser_utils.c \

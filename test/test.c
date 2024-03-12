@@ -11,11 +11,11 @@
 /* ************************************************************************** */
 
 // #include "include/minishell.h"
-#include <string.h>
+#include <string.h> //
 #include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
+#include <stdio.h> //
+#include <stdlib.h> //
+#include <unistd.h> //
 #include <stdio.h>
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -24,198 +24,160 @@
 #include "../libft/libft.h"
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <fcntl.h>
+#include <fcntl.h> //
 #include <dirent.h>
-#include <sys/types.h>
-#include <sys/wait.h>
+#include <sys/types.h> //
+#include <sys/wait.h> //
+#include <stdbool.h>
 
-int ft_super_countwords(const char *s)
-{
-    int count = 0;
-    int inside_word = 0;
 
-    while (*s)
-    {
-        if (*s == ' ')
-            inside_word = 0;
-        else if (inside_word == 0)
-        {
-            inside_word = 1;
-            count++;
-        }
-        s++;
-    }
-    return count;
-}
+/**/
 
-const char *ft_skip_spaces(const char *s)
-{
-    while (*s && *s == ' ')
-        s++;
-    return s;
-}
+// int here_doc(char *eof)
+// {
+// 	char *s;
 
-char *ft_extract_word(const char *s, int size)
-{
-    char *word = (char *)malloc((size + 1) * sizeof(char));
-    if (!word)
-        return NULL;
-    for (int i = 0; i < size; i++)
-        word[i] = s[i];
-    word[size] = '\0';
-    return word;
-}
+// 	while (1)
+// 	{
+// 		s = malloc(sizeof(char *) + strlen(eof) + 1);
+// 		if (s)
+// 			read(1, s, strlen(eof)); //ft to strlen
+// 		if (strncmp(eof, s, strlen(eof) + 15) == 0 && s)
+// 		{
+// 			free(s);
+// 			break ;
+// 		}
+// 		free(s);
+// 	}
+// 	write(1, "Reached the end\n", 16);
 
-int ft_get_word_size(const char *s)
-{
-    int size = 0;
-    int insidequotes = 0;
-
-    while (s[size])
-    {
-        if (s[size] == '\"')
-            insidequotes = !insidequotes;
-        else if (s[size] == ' ' && !insidequotes)
-            break;
-        size++;
-    }
-    return size;
-}
-
-char **ft_super_split(char const *s)
-{
-    int j = 0;
-    int word_count = ft_super_countwords(s);
-    char **strs = (char **)malloc((word_count + 1) * sizeof(char *));
-    if (!strs)
-        return NULL;
-
-    while (*s && j < word_count)
-    {
-        s = ft_skip_spaces(s);
-        int word_size = ft_get_word_size(s);
-        if (j > 0 && *(s - 1) == '=' && word_size == 0)
-            word_size++;
-        strs[j] = ft_extract_word(s, word_size);
-        if (!strs[j])
-        {
-            // Gestion d'erreur : libérer la mémoire allouée précédemment
-            for (int k = 0; k < j; k++)
-                free(strs[k]);
-            free(strs);
-            return NULL;
-        }
-        j++;
-        s += word_size;
-    }
-    strs[j] = NULL;
-    return strs;
-}
-
-int	ft_strncmp(const char *s1, const char *s2, size_t n)
-{
-	size_t	i;
-
-	i = 0;
-	while ((unsigned char)s1[i] == s2[i] && (unsigned char)s1[i] != '\0'
-		&& s2[i] != '\0' && i < n - 1)
-		i++;
-	if (n > 0)
-		return ((unsigned char)s1[i] - (unsigned char)s2[i]);
-	else
-		return (0);
-}
-
-size_t ft_strlen(const char *s)
-{
-    size_t len = 0;
-    while (s[len])
-        len++;
-    return len;
-}
-
-int	nb_char(char *s)
+/*
+char    **get_exec(char **tab)
 {
 	int i;
 	int j;
+    int k;
+    char **ret;
 
-	int	count;
-
-	i = 0;
-	j = strlen(s);
-	j--;
-	while ((s[j] == ' ' || s[j] == '\t') && j > 0)
-		j--;
-	if (j < 0)
-		return (-1);
-	while (s[i] && (s[i] == ' ' || s[i] == '\t'))
-		i++;
-	count = 0;
-	while (i <= j)
-	{
-		i++;
-		count++;
-	}
-	return (count);
-}
-
-char	*ft_strndup(char *s, int n)
-{
-	size_t	len;
-	int		i;
-	char	*dst;
-
-	len = nb_char((char *)s);
-	i = 0;
-	dst = (char *)malloc(sizeof(char) * (len + 1));
-	if (!dst)
-		return (0);
-	while (s[i] && i <= n)
-	{
-		if (s[i] == ' ' && s[i + 1] == '\0')
-			break;
-		dst[i] = s[i];
-		i++;
-	}
-	dst[i] = '\0';
-//	printf("|%ld|%s|\n",len, dst);
-	return (dst);
-}
-
-
-char	**ok_function(char **tab)
-{
-	int i = 0;
-	char **tmp;
-
-	while (tab[i])
-		i++;
-	if (i < 3)
+	if (!tab)
 		return (NULL);
-	tmp = malloc(sizeof(char **) * 3);
+    i = 0;
+	while (tab[i])
+	{
+		if (ft_find_redirection(tab[i]) != 0 && tab[i])
+			i += 2;
+		else
+			break;
+	}
+	j = i;
+	while (ft_find_redirection(tab[j]) == 0 && tab[j])
+		j++;
+    k = 0;
+    ret = (char **)malloc(sizeof(char *) * (j - i + 1));
+	while (i < j)
+	{
+        ret[k] = strdup(tab[i]);
+		i++;
+        k++;
+	}
+    ret[k] = NULL;
+    return (ret);
 }
 
-int main(void)
+int	main(void)
 {
-	char *str;
+	char *s;
 	char **tab;
-	char **tmp;
-	int i = 0;
+	int i;
 
 	while (1)
 	{
 		i = 0;
-		str = readline("file-prog ~$ ");
-		tab = ft_super_split(str);
-		tmp = ok_function(tab);
-		while (tmp[i])
-		{
-			printf("%s\n", tmp[i]);
-			i++;
-		}
-		free(tmp);
-		free(str);
-		free(tab);
+		s = readline("--test-file-- ~$ ");
+		if (s == NULL)
+			break ;
+		printf("%s\n", s);
+		tab = ft_super_split(s);
+
+        // test function under here
+		tab = get_exec(tab);
+
+
+        while (tab[i])
+        {
+            printf("tab[%d] = %s\n", i, tab[i]);
+            i++;
+        }
+        if (!s)
+            free(s);
 	}
+}*/
+
+#define BUFFER_SZ 4096
+
+void    child_routin(int pipefd, char *eof)
+{
+	char *buf;
+	int nb;
+
+	close(pipefd[0]);
+	buf = malloc(sizeof(char **) + BUFFER_SZ);
+	while (buf)
+	{
+		nb = read(0, buf, BUFFER_SZ); //ft to strlen
+		if (nb == -1)
+		{
+			perror("here_doc");
+			continue ;
+		}
+		buf[nb - 1] = 0; // 0 = '/0'
+		if (ft_strcmp(eof, buf) == 0)
+			break ;
+		write(pipefd[1], buf, ft_strlen(buf));
+		write(pipefd[1], "\n", 1);
+	}
+	// write(STDOUT_FILENO, "reached the end\n", 16);
+	free(buf);
+	close(pipefd[1]);
+	exit(0);
 }
 
+int here_doc(char *eof)
+{
+	int pipefd[2];
+	pid_t pid;
+
+	buf = NULL;
+	if (pipe(pipefd) == -1)
+		return (-1);
+	pid = fork();
+	if (pid == -1)
+		return (-1);
+	if (pid == 0)
+	{
+        child_routin();
+	}
+	close(pipefd[1]);
+	waitpid(pid, NULL, 0);
+	return (pipefd[0]);
+}
+
+int main(int ac, char **av)
+{
+	int i = 1;
+
+	if (ac < 2)
+		return (1);
+	while (av[i])
+	{
+		int	fd = 0;
+		char buf[BUFFER_SZ] = { 0 };
+
+		fd = here_doc(av[i]);
+
+		read(fd, buf, BUFFER_SZ);
+		dprintf(1, "{%s}\n", buf);
+		i++;
+	}
+	return (0);
+}

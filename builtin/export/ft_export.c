@@ -74,7 +74,8 @@ int	ft_export(t_base *base)
 
 	if (!base->input)
 		return (0);
-	ret = ft_super_split(base->input);
+	ret = malloc(sizeof(char **) * ft_tablen(base->tableau[0]));
+	ret = base->tableau[0];
 	if (ret[1] == NULL && ft_strcmp(ret[0], "export") == 0)
 	{
 		print_list_env_export(base);

@@ -26,11 +26,14 @@ void ft_free_tab(char **str)
 void    own_cd(char *str, t_base *base)
 {
     char    **s;
+    int     x;
 
     s = ft_split(str, ' ');
-    if(s[1] != NULL)
+    if (s[1] == NULL)
+        x = chdir(get_var_env(base->env, "HOME="));
+    else if(s[1] != NULL)
 	{
-		int x = chdir(s[1]);
+		x = chdir(s[1]);
 		if(opendir(s[1]) == NULL)
 		{
 			if(x == -1)

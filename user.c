@@ -29,7 +29,11 @@ void	init_user2(char *s, char *tmp, int k, t_base *base)
 	free(s);
 	base->user = ft_strjoin(get_var_env(base->env, "USER="), "@");
 	base->user = ft_strjoin(base->user, tmp);
-	base->user = ft_strjoin(base->user, ":~$ ");
+	base->user = ft_strjoin(base->user, ":~");
+
+	base->user = ft_strjoin(base->user, get_var_env(base->env, "PWD="));
+
+	base->user = ft_strjoin(base->user, "$ ");
 }
 
 void	init_user(t_base *base)

@@ -34,6 +34,7 @@
 
 /*--macro--*/
 #define PATH_MAX 4096
+#define BUFFER_SZ 4096
 
 /*--struct--*/
 
@@ -57,6 +58,8 @@ typedef struct s_base
     char	*redirection_symbol;
     char	*command;
 
+	int		terminal_in;
+	int		terminal_out;
 	int		fd_out;
 	int		fd_in;
 	int		ft_custom_exit;
@@ -185,5 +188,25 @@ int 	check_if_storable(char *s);
 int ft_strcmp_spe(char *string, char *compared, int srt, int end);
 int is_char_or_num(char c);
 char    *get_path_tab(char *input, char **env);
+
+void	multi_redir(char **str, t_base *base);
+char **get_exec_ready(char **av, t_base *base);
+void	set_inpout(char **ret, t_base *base);
+int	get_output_file(char **av, char **ret);
+int	get_input_file(char **av, char **ret);
+char	**get_good_redir(char **tab);
+int	only_one_type_redir(char **tab);
+int	ft_exec(char **av, char **tab, t_base *base);
+int ft_spe_execve(char **av, char **tab, t_base *base);
+
+int	only_one_redir(char **s);
+void ft_double_redir(char **av, t_base *base);
+void ft_basic_redir(char **av, t_base *base);
+int ft_left_redir(char **av, t_base *base);
+char    **get_exec(char **tab);
+int	is_there_redir(char **s);
+void ft_double_lredir(t_base *base);
+int here_doc(char *eof, t_base *base);
+void    child_routin(int pipefd[2], char *eof, char *buf);
 
 #endif

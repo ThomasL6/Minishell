@@ -134,34 +134,85 @@ void	fd_change(t_base *base)
 	return ;
 }
 
+int	no_command(char **av)
+{
+	int i = 0;
+	
+	while (av[i])
+	{
+		if (ft_find_redirection(av[i]) != 0)
+			i += 2;
+		else
+			return (0);
+	}
+	return (1);
+}
+
+void	get_file_inpout(t_base *base, char **av)
+{
+	if (is_there_redir(av))
+	{
+		if (only_one_redir(av) == 1)
+		{
+			if (is_there_redir(av) == 4)
+				ft_double_lredir(base);
+			else if(is_there_redir(av) == 1)
+				ft_basic_redir(av, base);
+			else if (is_there_redir(av) == 2)
+				ft_double_redir(av, base);
+			else if (is_there_redir(av) == 3)
+				if (ft_left_redir(av, base) != 0)
+					return ;
+		}
+		else
+			multi_redir(av, base);
+	}
+}
+
 void	parser(t_base *base)
 {
-	get_input_tab(base);
-	if (ft_strcmp("", base->tableau[0][0]) == 0)
-		return ;
-	else if (ft_strcmp("env", base->tableau[0][0]) == 0)
-		print_list_env(base->env, base);
-	else if (ft_strcmp("echo", base->tableau[0][0]) == 0)
-		own_echo(base);
-	else if (ft_strcmp("pwd", base->tableau[0][0]) == 0)
-		get_pwd(base);
-	else if (ft_strcmp("cd", base->tableau[0][0]) == 0)
-		own_cd(base->input, base);
-	else if (ft_strcmp("export", base->tableau[0][0]) == 0)
-		ft_export(base);
-	else if (ft_strcmp("unset", base->tableau[0][0]) == 0)
-		ft_unset(base);
-	else if (ft_strcmp("exit", base->tableau[0][0]) == 0)
-		error(0, base);
-	else if (ft_strcmp("fdchange", base->tableau[0][0]) == 0) // to remove
-		fd_change(base); // to remove
-	else if (!ft_exec_prog(base->tableau[0], base))
+	int i = 0;
+	get_input_tab(base); // make tab
+
+	get_file_inpout(base, base->tableau[0]); // set in/out
+	
+	base->tableau[0] = get_exec(base->tableau[0]); // get exec
+	
+	if (no_command(base->tableau[0]) == 0)
 	{
-		ft_putstr_fd("Error - command not found\n", base->fd_out);
-		ft_putstr_fd(base->tableau[0][0], base->fd_out);
-		ft_putchar_fd('\n', base->fd_out);
-		// printf("Error - command %s not found\n", base->tableau[0][0]);
+		while (base->tableau[0][i])
+		{
+			dprintf(base->ft_custom_exit, "tableau[0][%d] = %s\n", i, base->tableau[0][i]);
+			i++;
+		}
+		dprintf(base->ft_custom_exit, "tableau[0][%d] = %s\n", i, base->tableau[0][i]);
+
+		if (ft_strcmp("", base->tableau[0][0]) == 0)
+			return ;
+		else if (ft_strcmp("env", base->tableau[0][0]) == 0)
+			print_list_env(base->env, base);
+		else if (ft_strcmp("echo", base->tableau[0][0]) == 0)
+			own_echo(base);
+		else if (ft_strcmp("pwd", base->tableau[0][0]) == 0)
+			get_pwd(base);
+		else if (ft_strcmp("cd", base->tableau[0][0]) == 0)
+			own_cd(base->input, base);
+		else if (ft_strcmp("export", base->tableau[0][0]) == 0)
+			ft_export(base);
+		else if (ft_strcmp("unset", base->tableau[0][0]) == 0)
+			ft_unset(base);
+		else if (ft_strcmp("exit", base->tableau[0][0]) == 0)
+			error(0, base);
+		else if (!ft_exec_prog(base->tableau[0], base))
+		{
+			ft_putstr_fd("Error - ", 1);
+			ft_putstr_fd(base->tableau[0][0], 1);
+			ft_putstr_fd(" command not found\n", 1);
+			// printf("Error - command %s not found\n", base->tableau[0][0]);
+		}
 	}
+	dup2(base->terminal_in, base->fd_out);
+	dup2(base->terminal_out, base->fd_in);
 	return ;
 }
 

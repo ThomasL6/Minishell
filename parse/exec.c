@@ -125,6 +125,8 @@ int	is_there_redir(char **s)
 			return (2);
 		else if (ft_find_redirection(s[i]) == 3)
 			return (3);
+		else if (ft_find_redirection(s[i]) == 4)
+			return (4);
 		i++;
 	}
 	return (0);
@@ -145,12 +147,12 @@ int ft_spe_execve(char **av, char **tab, t_base *base)
 		fd_tmp2 = dup(0); // fd_tmp2 = store the current stdin
 		if(dup2(base->fd_out, 1) == -1) //change the current stdout to the file descriptor
 		{
-            perror("Error redirecting output");
+        	perror("Error redirecting output");
             exit(EXIT_FAILURE);
         }
 		if (dup2(base->fd_in, 0) == -1) //change the current stdin to the file descriptor
 		{
-			perror("Error redirecting input");
+			// perror("Error redirecting input");
 			exit(EXIT_FAILURE);
 		}
 		dprintf(base->ft_custom_exit, "%d\n", base->fd_out); // to remove
@@ -168,134 +170,11 @@ int ft_spe_execve(char **av, char **tab, t_base *base)
 		write(base->fd_out, "\n", 1);
 		base->flag_redir = -1;
 	}
+	dup2(1, base->fd_out);
+	dup2(0, base->fd_in);
 	return (0);
 }
 
-// faire une fonction get redir qui ouvre fd au type de redir (a la place de while 1)
-// fermer les fd apres
-// le faire foncitonner avec les autre fonction
-
-
-void ft_left_redir(char **av, char **tab, t_base *base)
-{
-	int i;
-	int fd_tmp;
-	char **tmp;
-	(void)av;
-
-	fd_tmp = base->fd_in;
-	i = 0;
-	tmp = malloc(sizeof(char **) * (ft_tablen(base->tableau[0])));
-	while (ft_strncmp(base->tableau[0][i], "<", ft_strlen(base->tableau[0][i])) != 0 && base->tableau[0][i])
-	{
-		if (base->tableau[0][i + 1] == NULL)
-		{
-			base->fd_in = 0;
-			return ;
-		}
-		tmp[i] = base->tableau[0][i];
-		i++;
-	}
-	tmp[i] = NULL;
-	if (base->tableau[0][i + 1] == NULL)
-	{
-		base->fd_in = 0;
-		free(tmp);
-		return ;
-	}
-	i++;
-	base->fd_in = open(base->tableau[0][i], O_RDONLY , 0644);
-	base->flag_redir = 1;
-	ft_spe_execve(tmp, tab, base);
-	base->fd_in = fd_tmp;
-}
-
-void ft_basic_redir(char **av, char **tab, t_base *base)
-{
-	int i;
-	int fd_tmp;
-	char **tmp;
-	(void)av;
-
-	fd_tmp = base->fd_out;
-	i = 0;
-	tmp = malloc(sizeof(char **) * (ft_tablen(base->tableau[0])));
-	while (ft_strncmp(base->tableau[0][i], ">", ft_strlen(base->tableau[0][i])) != 0 && base->tableau[0][i])
-	{
-		if (base->tableau[0][i + 1] == NULL)
-		{
-			base->fd_out = 1;
-			return ;
-		}
-		tmp[i] = base->tableau[0][i];
-		i++;
-	}
-	tmp[i] = NULL;
-	if (base->tableau[0][i + 1] == NULL)
-	{
-		base->fd_out = 1;
-		free(tmp);
-		return ;
-	}
-	i++;
-	base->fd_out = open(base->tableau[0][i], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	base->flag_redir = 0;
-	ft_spe_execve(tmp, tab, base);
-	base->fd_out = fd_tmp;
-}
-
-void ft_double_redir(char **av, char **tab, t_base *base)
-{
-	int i;
-	int fd_tmp;
-	char **tmp;
-	(void)av;
-	
-	fd_tmp = base->fd_out;
-	i = -1;
-	tmp = malloc(sizeof(char **)*(ft_tablen(base->tableau[0])));
-	while (base->tableau[0][++i] && ft_strncmp(base->tableau[0][i], ">>", ft_strlen(base->tableau[0][i])) != 0)
-	{
-		if (!base->tableau[0][i + 1])
-		{
-			base->fd_out = 1;
-			return ;
-		}
-		tmp[i] = base->tableau[0][i];
-	}
-	tmp[i] = NULL;
-	if (!base->tableau[0][i + 1])
-	{
-		base->fd_out = 1;
-		free(tmp);
-		return ;
-	}
-	base->fd_out = open(base->tableau[0][++i], O_WRONLY | O_CREAT | O_APPEND, 0644);
-	base->flag_redir = 0;
-	ft_spe_execve(tmp, tab, base);
-	base->fd_out = fd_tmp;
-}
-
-
-int	only_one_redir(char **s)
-{
-	int i;
-	int count;
-
-	i = 0;
-	count = 0;
-	while (s[i])
-	{
-		if (ft_find_redirection(s[i]) != 0)
-			count++;
-		i++;
-	}
-	if (count > 1)
-		return (0);
-	return (1);
-}
-
-void multi_redir(char **av, t_base *base);
 
 int	ft_exec(char **av, char **tab, t_base *base)
 {
@@ -305,52 +184,15 @@ int	ft_exec(char **av, char **tab, t_base *base)
 	int i = 1; // to remove
 
 	ft_putstr_fd("in ft_exec\n", base->ft_custom_exit);
-	if (is_there_redir(av))
-	{
-		if (only_one_redir(av) == 1)
-		{
-			if(is_there_redir(av) == 1)
-				ft_basic_redir(av, tab, base);
-			else if (is_there_redir(av) == 2)
-				ft_double_redir(av, tab, base);
-			else if (is_there_redir(av) == 3)
-				ft_left_redir(av, tab, base);
-		}
-		else
-			multi_redir(av, base);
-	}
-	else
-	{
-		dprintf(base->ft_custom_exit, "about to execute |"); // to remove
-		while (av[i])	 // to remove
-			dprintf(base->ft_custom_exit, "%s ", av[i++]); // to remove
-		dprintf(base->ft_custom_exit, "|\n"); // to remove
-		ft_spe_execve(av, tab, base);
-		ft_putstr_fd("execute done\n", base->ft_custom_exit); // to remove
-	}
+	dprintf(base->ft_custom_exit, "about to execute |"); // to remove
+	while (av[i])	 // to remove
+		dprintf(base->ft_custom_exit, "%s ", av[i++]); // to remove
+	dprintf(base->ft_custom_exit, "|\n"); // to remove
+	ft_spe_execve(av, tab, base);
+	ft_putstr_fd("execute done\n", base->ft_custom_exit); // to remove
+	dup2(1, base->fd_out);
+	dup2(0, base->fd_in);
 	return (0);
-}
-
-void multi_redir(char **av, t_base *base)
-{
-	int i;
-	// int fd_tmp;
-	char **tmp;
-
-	i = 1;
-	tmp = malloc(sizeof(char **) + 3);
-	while (av[i] != NULL)
-		i++;
-	while (is_there_redir(av) == 0 && i > 0)
-		i--;
-
-	
-	tmp[0] = ft_strndup(av[0], ft_strlen(av[0]));
-	if (av[i])
-		tmp[1] = ft_strndup(av[i], ft_strlen(av[i]));
-	if (av[i + 1])
-		tmp[2] = ft_strndup(av[i + 1], ft_strlen(av[i + 1]));
-	ft_exec(av, tmp, base);
 }
 
 int ft_exec_prog(char **av, t_base *base)
@@ -365,6 +207,8 @@ int ft_exec_prog(char **av, t_base *base)
 		return (0);
 	}
 	ft_exec(av, base->env_old, base);
+	dup2(1, base->fd_out);
+	dup2(0, base->fd_in);
 	//perror("execve failed");
 	return (1);
 }

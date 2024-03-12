@@ -78,6 +78,7 @@ void    gest_intp(t_base *base)
 
 void	ft_loop(t_base *base)
 {
+	init_user(base);
 	while (1)
 	{
 		base->input = readline(base->user);
@@ -109,7 +110,11 @@ int	main(int ac, char **av, char **env)
 	base = malloc(sizeof(t_base));
 	base->env_old = env;
 	base->tableau = malloc(sizeof(char ***) * 1);
-	base->ft_custom_exit = open("exit.txt", O_CREAT | O_RDWR | O_TRUNC, 0644);
+	base->fd_in = 0;
+	base->fd_out = 1;
+	dup2(1, base->terminal_in);
+	dup2(0, base->terminal_out);
+	base->ft_custom_exit = open("debug.txt", O_CREAT | O_RDWR | O_TRUNC, 0644);
 	ft_putstr_fd("-- opened Minishell --\n", base->ft_custom_exit);
 	initial_chain(&base->env, env, base); // clone env
 	init_user(base);
