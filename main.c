@@ -16,20 +16,15 @@ int	g_signal = 0;
 
 void	received_signal(int n)
 {
-	if (n == SIGTSTP)
+	if (n == SIGTSTP || n == SIGINT)
 	{
 		printf("\n");
 		rl_replace_line("", 0);
 		rl_on_new_line();
 		rl_redisplay();
 	}
-	else if (n == SIGINT)
-	{
-		printf("\n");
-		rl_replace_line("", 0);
-		rl_on_new_line();
-		rl_redisplay();
-	}
+	else if (n == SIGQUIT)
+		printf("\b\b  \b\b");
 }
 
 int	ft_parser(char *s)
@@ -37,13 +32,11 @@ int	ft_parser(char *s)
 	if (chk_quote(s) != 1)
 	{
 		printf("Error - Quotes are not closed,"); // should redo the phrasing
-		printf(" missing either \' of \" \n");
 		return (-1);
 	}
 	if (chk_pipe_start(s) == 1)
 	{
 		printf("Error - First character in string should not"); // should redo the phrasing
-		printf(" be a |\n");
 		return (-2);
 	}
 	else
@@ -61,26 +54,37 @@ void    gest_intp(t_base *base)
 	if (chk_directory(base) == 0 && base->input != NULL)
 		free(base->input);
 	parser(base);
-	// while() // -> parcours le tableau jusque end
-	// {
-	// 	while() // -> parcours le tableau jusque "|"
-	// 	{
-	// 		if (is_input())
-	// 			input();
-	// 		else
-	// 		{
-	// 			exec()
-	// 		}
-	// 		// pour les deux pensez aux chevrons  
-	// 	}
-	// }
+}
+
+void	triple_free_tab(char ***tab)
+{
+	int i;
+	int j;
+
+	i = 0;
+	j = 0;
+	if (!tab)
+		return ;
+	while(tab && tab[i])
+	{
+		j = 0;
+		while(tab && tab[i][j])
+		{
+			free(tab[i][j]);
+			j++;
+		}
+		free(tab[i]);
+		if (tab[i + 1] != NULL)
+			i++;
+	}
 }
 
 void	ft_loop(t_base *base)
 {
-	init_user(base);
 	while (1)
 	{
+		base->return_value_flag = 0;
+		init_user(base);
 		base->input = readline(base->user);
 		if (base->input == NULL)
 		{
@@ -90,9 +94,32 @@ void	ft_loop(t_base *base)
 		}
 		else if (is_empty(base->input) == 0)
 			continue;
+		base->loop++;
 		gest_intp(base);
 	}
 	ft_exit(base);
+}
+
+void	init_base(t_base *base, char **env)
+{
+	base->tableau = malloc(sizeof(char ***) * 1);
+	base->input = NULL;
+	base->user = NULL;
+	base->cur_pwd = NULL;
+	base->env_old = env;
+	base->output_file = NULL;
+	base->env = NULL;
+	base->command = NULL;
+	base->terminal_in = dup(1);
+	base->terminal_out = dup(0);
+	base->fd_in = dup(1);
+	base->fd_out = dup(0);
+	base->ft_custom_exit = open("debug.txt", O_CREAT | O_RDWR | O_TRUNC, 0644);
+	base->env_path = NULL;
+	base->flag_redir = 0;
+	base->return_value = 0;
+	base->return_value_flag = 0;
+	base->loop = 0;
 }
 
 int	main(int ac, char **av, char **env)
@@ -108,13 +135,7 @@ int	main(int ac, char **av, char **env)
 	//signal(SIGSEGV, &received_signal); // remove this
 
 	base = malloc(sizeof(t_base));
-	base->env_old = env;
-	base->tableau = malloc(sizeof(char ***) * 1);
-	base->fd_in = 0;
-	base->fd_out = 1;
-	dup2(1, base->terminal_in);
-	dup2(0, base->terminal_out);
-	base->ft_custom_exit = open("debug.txt", O_CREAT | O_RDWR | O_TRUNC, 0644);
+	init_base(base, env);
 	ft_putstr_fd("-- opened Minishell --\n", base->ft_custom_exit);
 	initial_chain(&base->env, env, base); // clone env
 	init_user(base);

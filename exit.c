@@ -12,8 +12,34 @@
 
 #include "include/minishell.h"
 
+// void	ft_exit(t_base *base)
+// {
+// 	if (base->input != NULL)
+// 		free(base->input);
+// 	if (base->user != NULL)
+// 		free(base->user);
+// 	if (base->cur_pwd != NULL)
+// 		free(base->cur_pwd);
+// 	if (base->env != NULL)
+// 		free_chain(base->env);
+// 	if (base->env_old != NULL)
+// 		free(base->env_old);
+// 	if (base->output_file != NULL)
+// 		free(base->output_file);
+// 	if (base->env_path != NULL)
+// 		free(base->env_path);
+// 	if (base->command != NULL)
+// 		free(base->command);
+// 	if (base->tableau != NULL)
+// 		free(base->tableau);
+// 	close(base->ft_custom_exit);
+// 	exit(g_signal);
+
+// }
+
 void	ms_exit_message(t_base *base)
 {
+	ft_putstr_fd("exit", base->fd_out);
 	ft_putchar_fd('\n', base->fd_out);
 	ft_putstr_fd("/-------------------", base->fd_out);
 	ft_putchar_fd(92 , base->fd_out);
@@ -44,6 +70,7 @@ void	exit_prog(int i, void *ptr, t_base *base)
 
 void    free_chain(t_env **chain, t_base *base)
 {
+	(void)base;
     t_env   *link;
     t_env   *ptr;
 
@@ -57,8 +84,6 @@ void    free_chain(t_env **chain, t_base *base)
 		link = ptr;
 	}
 	*chain = NULL;
-	ft_putstr_fd("\n- Chained free'd\n", base->fd_out);
-	// printf("\n- Chained free'd\n");
 }
 
 void	ft_exit(t_base *base)

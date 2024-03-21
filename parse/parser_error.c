@@ -15,11 +15,11 @@
 void	message_error(char *s, int flag)
 {
 	if (flag == 1)
-		printf("Error - |%s| is a directory\n", s);
+		printf("Error - %s is a directory\n", s);
 	if (flag == 2)
-		printf("Error - |%s| No such file or directory\n", s);
+		printf("Error - %s No such file or directory\n", s);
 	if (flag == 3)
-		printf("Error - Command |%s| does not exist\n", s);
+		printf("Error - Command %s does not exist\n", s);
 	free(s);
 }
 
@@ -50,8 +50,8 @@ int	chk_directory3(char *str, int i)
 {
 	if (just_whitespace(str, i) == 1 || only_dots(str, i) == 1)
 	{
-			message_error(str, 1);
-			return (0);
+		message_error(str, 1);
+		return (0);
 	}
 	else if (only_dots(str, i) == -1)
 	{
@@ -60,8 +60,6 @@ int	chk_directory3(char *str, int i)
 	}
 	return (1);
 }
-
-
 
 int	chk_directory4(char *str, int i)
 {
@@ -83,9 +81,9 @@ int	chk_directory4(char *str, int i)
 
 int	chk_directory(t_base *base)
 {
-	char *str;
-	int i;
-	
+	char	*str;
+	int		i;
+
 	i = 0;
 	str = spaceless_strdup(base);
 	if (str[i] == '.')

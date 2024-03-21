@@ -12,18 +12,6 @@
 
 #include "../include/minishell.h"
 
-int	skip_whitespace(char *string, int i)
-{
-	int	j;
-
-	j = 0;
-	while ((string[i + j] == ' ' || string[i + j] == '\b'
-			|| string[i + j] == '\t'
-			|| string[i + j] == '\n') && string[i + j] != 0)
-		j++;
-	return (j);
-}
-
 int	just_whitespace(char *s, int i)
 {
 	while (s[i])
@@ -38,7 +26,7 @@ int	just_whitespace(char *s, int i)
 
 int	ft_strnlen(char *s, int i)
 {
-	int j;
+	int	j;
 
 	j = 0;
 	while (s[i] != '\0')
@@ -52,8 +40,8 @@ int	ft_strnlen(char *s, int i)
 char	*spaceless_strdup(t_base *base)
 {
 	char	*ret;
-	int i;
-	int j;
+	int		i;
+	int		j;
 
 	j = 0;
 	i = skip_whitespace(base->input, 0);
@@ -70,7 +58,7 @@ char	*spaceless_strdup(t_base *base)
 
 int	only_dots(char *s, int i)
 {
-	int j;
+	int	j;
 
 	j = 0;
 	while (s[i])
@@ -90,7 +78,7 @@ int	only_dots(char *s, int i)
 
 int	many_dots(char *s, int i)
 {
-	int j;
+	int	j;
 	int	flag;
 
 	j = 0;

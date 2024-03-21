@@ -12,106 +12,112 @@
 
 #include "../include/minishell.h"
 
-char	*ft_strdup(const char *s)
+void	get_input_tab_spe(t_base *base, char **command)
 {
-	size_t	len;
-	int		i;
-	char	*dst;
-
-	len = ft_strlen((char *)s);
-	i = 0;
-	dst = (char *)malloc(sizeof(char) * (len + 1));
-	if (!dst)
-		return (0);
-	while (s[i])
-	{
-		if (dst[i] == ' ' && s[i + 1] == '\0')
-			break;
-		dst[i] = s[i];
-		i++;
-	}
-	dst[i] = '\0';
-	return (dst);
-}
-
-int	nb_char(char *s)
-{
-	int i;
-	int j;
-
-	int	count;
-
-	i = 0;
-	j = strlen(s);
-	j--;
-	while ((s[j] == ' ' || s[j] == '\t') && j > 0)
-		j--;
-	if (j < 0)
-		return (-1);
-	while (s[i] && (s[i] == ' ' || s[i] == '\t'))
-		i++;
-	count = 0;
-	while (i <= j)
-	{
-		i++;
-		count++;
-	}
-	return (count);
-}
-
-char	*ft_strndup(const char *s, int n)
-{
-	size_t	len;
-	int		i;
-	char	*dst;
-
-	len = nb_char((char *)s);
-	i = 0;
-	dst = (char *)malloc(sizeof(char) * (len + 1));
-	if (!dst)
-		return (0);
-	while (s[i] && i <= n)
-	{
-		if (s[i] == ' ' && s[i + 1] == '\0')
-			break;
-		dst[i] = s[i];
-		i++;
-	}
-	dst[i] = '\0';
-//	printf("|%ld|%s|\n",len, dst);
-	return (dst);
-}
-
-void	get_input_tab(t_base *base)
-{
-	int i = -1; // to remove
 	int	j;
 
-	(void)i;
-	(void)j;
 	j = 0;
-	base->tableau[0] = ft_super_split(base->input); // replaced ft_special_split, fuck you special split
-	while (base->tableau[j])
+	command = ft_super_split(base->input);
+	while (command[j])
 	{
-		//printf("%s\n", base->tableau[j]);
-		base->tableau[0][j] = ft_strndup(base->tableau[0][j], nb_char(base->tableau[0][j]));
+		base->tableau[0][j] = ft_strndup(command[j], nb_char(command[j]));
 		j++;
 	}
 }
 
-void	error(int i, t_base *base)
+void	tab_printf(char **tab)
 {
-	if (i == 0)
+	int i;
+	
+	i = 0;
+	while (tab[i])
 	{
-		ft_putstr_fd("Error -", 1);
-		ft_putstr_fd(base->tableau[0][0], 1);
-		ft_putstr_fd(" command not found\n", 1);
+		dprintf(1, "tab[%d] = %s\n", i, tab[i]);
+		i++;
 	}
-	else if (i == 1)
+}
+
+void	gest_pipe_and_redir2(t_base *base, char ***command, int i)
+{
+	base->input = correct_input_for_parser(base->input);
+	if (find_pipe(base->input) == -1)
 	{
-		ft_putstr_fd("exit not free'd\n", 1);
-		exit_prog(0, base->env, base);
-		exit(1273);
+		get_input_tab_spe(base, command[i]);
+		tab_printf(command[i]);
+	}
+	get_file_inpout(base, command[i], i);
+	command[i] = get_exec(command[i]);
+	get_command(command, i, base);
+	return ;
+}
+
+
+void execute_pipeline(char ***command, int nb_cmds, t_base *base)
+{
+	pid_t pid;
+	int prev_pipe_read;
+	int pipefd[2];
+	int i;
+
+	i = 0;
+	prev_pipe_read = base->fd_in;
+	while (i < nb_cmds)
+	{
+		if (i < nb_cmds - 1)
+		{
+			if (pipe(pipefd) < 0)
+			{
+				perror("pipe");
+				exit(EXIT_FAILURE);
+			}
+		}
+		pid	 = fork();
+		if (pid == -1)
+		{
+			perror("fork");
+			exit(EXIT_FAILURE);
+		}
+		else if (pid == 0)
+		{
+			if (i != 0)
+			{
+				if (dup2(prev_pipe_read, base->fd_in) == -1)
+				{
+					perror("dup2");
+					exit(EXIT_FAILURE);
+				}
+				close(prev_pipe_read);
+			}
+			if (i < nb_cmds - 1)
+			{
+				if (dup2(pipefd[1], base->fd_out) == -1)
+				{
+					perror("dup2");
+					exit(EXIT_FAILURE);
+				}
+			}
+			if (is_there_redir(command[i]) != 0)
+				gest_pipe_and_redir2(base, command, i);
+			else
+			{
+				get_file_inpout(base, command[i], i);
+				get_command(command, i, base);
+			}
+			close(pipefd[0]);
+			close(pipefd[1]);
+			// ft_exec_prog(command[i], base);
+			exit(EXIT_FAILURE);
+		}
+		else
+		{
+			wait(NULL);
+			if (i < nb_cmds - 1)
+			{
+				close(pipefd[1]);
+				prev_pipe_read = pipefd[0];
+			}
+		}
+		i++;
 	}
 }
 
@@ -129,93 +135,151 @@ void	fd_change(t_base *base)
 		return ;
 	}
 	else
-
 		base->fd_out = open(base->tableau[0][1], O_RDWR | O_CREAT | O_TRUNC, 0644);
 	return ;
 }
 
-int	no_command(char **av)
-{
-	int i = 0;
-	
-	while (av[i])
-	{
-		if (ft_find_redirection(av[i]) != 0)
-			i += 2;
-		else
-			return (0);
-	}
-	return (1);
-}
-
-void	get_file_inpout(t_base *base, char **av)
+void	get_file_inpout(t_base *base, char **av, int i)
 {
 	if (is_there_redir(av))
 	{
 		if (only_one_redir(av) == 1)
 		{
 			if (is_there_redir(av) == 4)
-				ft_double_lredir(base);
+				ft_double_lredir(base, i);
 			else if(is_there_redir(av) == 1)
-				ft_basic_redir(av, base);
+				ft_basic_redir(av, base, i);
 			else if (is_there_redir(av) == 2)
-				ft_double_redir(av, base);
+				ft_double_redir(av, base, i);
 			else if (is_there_redir(av) == 3)
-				if (ft_left_redir(av, base) != 0)
+				if (ft_left_redir(av, base, i) != 0)
 					return ;
 		}
 		else
-			multi_redir(av, base);
+			multi_redir(av, base, i);
 	}
+}
+
+
+char *correct_input_for_parser(char *s)
+{
+	char *str;
+	char *tmp;
+	int i = 0;
+	int j = 0;
+
+	tmp = correct_redirection(s);
+	str = malloc(sizeof(char) * correct_redirection_len(s) + 1);
+	while (i < correct_redirection_len(s) && tmp[i] != '\0')
+	{
+		if ((tmp[0] == ' ' || tmp[0] == '\t') && i == 0 && j == 0)
+			i++;
+		else
+		{
+			str[j] = tmp[i];
+			i++;
+			j++;
+		}
+	}
+	str[j] = '\0';
+	free(tmp);
+	return (str);
+}
+
+int	hm_ultra_tab(char ***tab)
+{
+	int i;
+
+	i = 0;
+	while (tab[i])/* != NULL)*/
+		i++;
+	return (i);
+}
+
+void	get_command(char ***tableau, int j, t_base *base)
+{
+	if (no_command(tableau[j]) == 0)
+	{
+		if (ft_strcmp("", tableau[j][0]) == 0)
+			return ;
+		else if (ft_strcmp("env", tableau[j][0]) == 0)
+			own_env(base, j);
+		else if (ft_strcmp("echo", tableau[j][0]) == 0)
+			own_echo(base, j);
+		else if (ft_strcmp("pwd", tableau[j][0]) == 0)
+			get_pwd(base);
+		else if (ft_strcmp("cd", tableau[j][0]) == 0)
+			own_cd(base->input, base);
+		else if (ft_strcmp("export", tableau[j][0]) == 0)
+			ft_export(base);
+		else if (ft_strcmp("unset", tableau[j][0]) == 0)
+			ft_unset(base);
+		else if (ft_strcmp("exit", tableau[j][0]) == 0)
+			error(0, base);
+		else if (!ft_exec_prog(tableau[j], base))
+		{
+			ft_putstr_fd(base->tableau[j][0], base->fd_out);
+			ft_putstr_fd(": command not found\n", base->fd_out);
+			base->return_value = 127;
+		}
+	}
+}
+
+
+char *put_space_at_pipe(char *s)
+{
+	char *ret;
+	int i;
+	int j;
+
+	i = 0;
+	j = 0;
+	ret = malloc(sizeof(char) * ft_strlen(s) + 1);
+	while (s[i])
+	{
+		if (s[i] == '|')
+		{
+			ret[j] = ' ';
+			j++;
+			ret[j] = '|';
+			j++;
+			ret[j] = ' ';
+		}
+		else
+		{
+			ret[j] = s[i];
+		}
+		i++;
+		j++;
+	}
+	ret[j] = '\0';
+	return (ret);
 }
 
 void	parser(t_base *base)
 {
-	int i = 0;
-	get_input_tab(base); // make tab
-
-	get_file_inpout(base, base->tableau[0]); // set in/out
-	
-	base->tableau[0] = get_exec(base->tableau[0]); // get exec
-	
-	if (no_command(base->tableau[0]) == 0)
+	if (base->return_value_flag == 1)
 	{
-		while (base->tableau[0][i])
-		{
-			dprintf(base->ft_custom_exit, "tableau[0][%d] = %s\n", i, base->tableau[0][i]);
-			i++;
-		}
-		dprintf(base->ft_custom_exit, "tableau[0][%d] = %s\n", i, base->tableau[0][i]);
-
-		if (ft_strcmp("", base->tableau[0][0]) == 0)
-			return ;
-		else if (ft_strcmp("env", base->tableau[0][0]) == 0)
-			print_list_env(base->env, base);
-		else if (ft_strcmp("echo", base->tableau[0][0]) == 0)
-			own_echo(base);
-		else if (ft_strcmp("pwd", base->tableau[0][0]) == 0)
-			get_pwd(base);
-		else if (ft_strcmp("cd", base->tableau[0][0]) == 0)
-			own_cd(base->input, base);
-		else if (ft_strcmp("export", base->tableau[0][0]) == 0)
-			ft_export(base);
-		else if (ft_strcmp("unset", base->tableau[0][0]) == 0)
-			ft_unset(base);
-		else if (ft_strcmp("exit", base->tableau[0][0]) == 0)
-			error(0, base);
-		else if (!ft_exec_prog(base->tableau[0], base))
-		{
-			ft_putstr_fd("Error - ", 1);
-			ft_putstr_fd(base->tableau[0][0], 1);
-			ft_putstr_fd(" command not found\n", 1);
-			// printf("Error - command %s not found\n", base->tableau[0][0]);
-		}
+		write(base->fd_out, ft_itoa(base->return_value), ft_strlen(ft_itoa(base->return_value)));
+		write(base->fd_out, "\n", 2);
 	}
+	dup2(base->terminal_in, base->fd_in);
+	dup2(base->terminal_out, base->fd_out);
+	base->input = correct_input_for_parser(base->input);
+	base->input = put_space_at_pipe(base->input);
+	if (find_pipe(base->input) == -1)
+		get_input_tab(base, 0);
+	else
+	{
+		base->tableau = pre_build_tab(base, base->input);//, base);
+		gest_dollar_multipipe(base);
+		execute_pipeline(base->tableau, hm_ultra_tab(base->tableau), base);
+		return ;
+	}
+	get_file_inpout(base, base->tableau[0], 0); // set in/out
+	base->tableau[0] = get_exec(base->tableau[0]); // get exec
+	get_command(base->tableau, 0, base);
+	ft_bzero(base->input, ft_strlen(base->input));
 	dup2(base->terminal_in, base->fd_out);
 	dup2(base->terminal_out, base->fd_in);
-	return ;
 }
-
-	//chaque "mot" dans un maillon [x]
-	//changer les variables env en votre valeur ($PATH -> path dans votre env) [x]
-	// -> exec [?]

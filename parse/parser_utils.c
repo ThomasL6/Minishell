@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser_utils.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: thlefebv <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/03/13 17:24:00 by thlefebv          #+#    #+#             */
+/*   Updated: 2024/03/13 17:24:02 by thlefebv         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/minishell.h"
 
 int	check_quote(const char *s, int i, char c)
@@ -14,7 +26,7 @@ int	check_quote(const char *s, int i, char c)
 	return (len + 1);
 }
 
-int	ft_find_redirection(char  *s)
+int	ft_find_redirection(char *s)
 {
 	if (s)
 	{
@@ -26,13 +38,17 @@ int	ft_find_redirection(char  *s)
 			return (3);
 		else if (ft_strcmp(s, "<<") == 0)
 			return (4);
+		else if (ft_strncmp(s, "<<<", 3) == 0)
+			return (-1);
+		else if (ft_strncmp(s, ">>>", 3) == 0)
+			return (-1);
 	}
 	return (0);
 }
 
 int	where_is_equal(const char *s, int i) // return len before the char
 {
-	int start;
+	int	start;
 
 	start = i;
 	while (s[i] != '=' && s[i] != '\0')
@@ -63,8 +79,14 @@ int	ft_strlen_wo_quote(char *s)
 	}
 	return (len);
 }
+int	skip_whitespace(char *string, int i)
+{
+	int	j;
 
-// input -> parser -> split -> base-tableau -> trim -> parser -> echo -> output
-
-//		echo	|| tab[0]
-//		"$PATH"	|| tab[1]
+	j = 0;
+	while ((string[i + j] == ' ' || string[i + j] == '\b'
+			|| string[i + j] == '\t'
+			|| string[i + j] == '\n') && string[i + j] != 0)
+		j++;
+	return (j);
+}

@@ -9,13 +9,11 @@
 /*   Updated: 2024/02/05 13:39:19 by vamologl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-
 #include "../include/minishell.h"
 
 int	chk_pipe_start(char *s) // return 1 if the first char is a pipe
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (s[i] == ' ' || s[i] == '\t' || s[i] == '\n')
@@ -27,7 +25,7 @@ int	chk_pipe_start(char *s) // return 1 if the first char is a pipe
 
 int	chk_pipe_end(char *s)
 {
-	int i;
+	int	i;
 
 	i = ft_strlen(s);
 	i--;

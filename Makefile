@@ -28,15 +28,20 @@ SRCS = main.c \
 	builtin/ft_env.c \
 	check/c_quote.c \
 	check/c_pipes.c \
+	exec/exec.c \
+	exec/exec2.c\
 	lists/listchained.c \
 	lists/listchained2.c \
 	parse/parser.c \
-	parse/exec.c \
 	parse/gest_redir_utils.c \
+	parse/gest_redir_utils1.c \
 	parse/gest_redir.c \
 	parse/parser_error.c \
-	parse/parser_utils2.c \
 	parse/parser_utils.c \
+	parse/parser_utils2.c \
+	parse/parser_utils3.c \
+	parse/token.c \
+	parse/token2.c \
 	Utils/utils.c \
 	Utils/utils2.c \
 	Utils/utils3.c \

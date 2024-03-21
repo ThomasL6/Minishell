@@ -12,37 +12,50 @@
 
 #include "../include/minishell.h"
 
-void ft_free_tab(char **str)
+void	ft_free_tab(char **str)
 {
-    int i = 0;
-    while (str[i] != NULL)
-    {
-        free(str[i]);
-        i++;
-    }
-    free(str);
+	int	i;
+
+	i = 0;
+	while (str[i] != NULL)
+	{
+		free(str[i]);
+		i++;
+	}
+	free(str);
 }
 
-void    own_cd(char *str, t_base *base)
+void	own_cd(char *str, t_base *base)
 {
-    char    **s;
-    int     x;
+	char	**s;
+	int		x;
 
-    s = ft_split(str, ' ');
-    if (s[1] == NULL)
-        x = chdir(get_var_env(base->env, "HOME="));
-    else if(s[1] != NULL)
+	s = ft_split(str, ' ');
+	if (s[1] == NULL)
+		x = chdir(get_var_env(base->env, "HOME="));
+	if (s[2] != NULL)
+	{
+		ft_putstr_fd("Error: too many arguments\n", base->fd_out);
+		// perror("Error: too many arguments");
+		ft_free_tab(s);
+		base->return_value = 1;
+		return ;
+	}
+	else if (s[1] != NULL)
 	{
 		x = chdir(s[1]);
-		if(opendir(s[1]) == NULL)
+		if (opendir(s[1]) == NULL)
 		{
-			if(x == -1)
-            {
-                ft_putstr_fd("cd: no such file or directory: ", base->fd_out);
-                ft_putstr_fd(s[1], base->fd_out);
-                ft_putstr_fd("\n", base->fd_out);
-            }
+			if (x == -1)
+			{
+				base->return_value = 1;
+				printf("ret value = %d\n", base->return_value);
+				perror(s[1]);
+				ft_free_tab(s);
+				return ;
+			}
 		}
 	}
-    ft_free_tab(s);
+	base->return_value = 0;
+	ft_free_tab(s);
 }

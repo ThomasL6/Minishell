@@ -12,20 +12,20 @@
 
 #include "../include/minishell.h"
 
-int	chk_quote(char *s) // return 1 if every quotes are closed and 0 if not and no mix
+int	chk_quote(char *s)
 {
 	int	i;
 
 	i = 0;
-	while (s[i] != 0)
+	while (s[i++] != 0)
 	{
-		if (s[i] == 39) // 39 = ' (single quote)
+		if (s[i] == 39)
 		{
 			i++;
 			while (s[i] != 39)
 			{
 				if (s[i++] == 0)
-					return (0); // not closed with ''
+					return (0);
 			}
 		}
 		if (s[i] == '"')
@@ -34,10 +34,9 @@ int	chk_quote(char *s) // return 1 if every quotes are closed and 0 if not and n
 			while (s[i] != '"')
 			{
 				if (s[i++] == 0)
-					return (0); // not closed but with ""
+					return (0);
 			}
 		}
-		i++;
 	}
 	return (1);
 }

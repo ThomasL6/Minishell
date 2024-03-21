@@ -12,10 +12,10 @@
 
 #include "../include/minishell.h"
 
-int check_if_storable(char *s)
+int	check_if_storable(char *s)
 {
-	int i;
-	int j;
+	int	i;
+	int	j;
 
 	i = 0;
 	if (!s[0])
@@ -40,27 +40,40 @@ int check_if_storable(char *s)
 	return (1);
 }
 
-int is_char_or_num(char c)
+int	is_char_or_num(char c)
 {
-    if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'))
-        return (1);
-    else
-        return (0);
+	if ((c >= 'a' && c <= 'z')
+		|| (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'))
+		return (1);
+	else
+		return (0);
 }
 
-int ft_strcmp_spe(char *string, char *compared, int srt, int end)
+int	ft_strcmp_spe(char *string, char *compared, int srt, int end)
 {
-    int i = 0;
-    while (string[srt] == compared[i] && string[srt] != '\0' &&
-           compared[i] != '\0' && srt < end)
-    {
-        i++;
-        srt++;
-    }
-    return (string[srt] - compared[i]);
+	int	i;
+
+	i = 0;
+	while (string[srt] == compared[i] && string[srt] != '\0'
+		&& compared[i] != '\0' && srt < end)
+	{
+		i++;
+		srt++;
+	}
+	return (string[srt] - compared[i]);
 }
 
 void	ft_fdprint(int fd, char *str)
 {
 	write(fd, str, ft_strlen(str));
+}
+
+int	ft_strcmp(char *s1, char *s2)
+{
+	int	i;
+
+	i = 0;
+	while (s1[i] == s2[i] && s1[i] != '\0' && s2[i] != '\0')
+		i++;
+	return (s1[i] - s2[i]);
 }

@@ -14,20 +14,24 @@
 
 void	*ft_find_quote(char *s)
 {
-	char *buff;
-	int	flag = 0;
-	int	i = 0;	// end
-	int e = 0;	// start
-	int	indx = 0;
+	char	*buff;
+	int		flag;
+	int		i;
+	int		e;
+	int		indx;
 
+	flag = 0;
+	i = 0;
+	e = 0;
+	indx = 0;
 	while (s[i] != '\0')
 	{
-		if (s[i] == 39 && flag == 0) // find first flag
+		if (s[i] == 39 && flag == 0)
 		{
 			e = i;
 			flag = 1;
 		}
-		else if (s[i] == 39 && flag == 1) // find second flag
+		else if (s[i] == 39 && flag == 1)
 		{
 			flag = 2;
 			break ;
@@ -50,11 +54,11 @@ void	*ft_find_quote(char *s)
 
 char	**ft_get_text(char *s)
 {
-	char **tab;
-	int i;
-	int j;
-	int	indx;
-	int jndx;
+	char	**tab;
+	int		i;
+	int		j;
+	int		indx;
+	int		jndx;
 
 	indx = 0;
 	tab = malloc(sizeof(char **) * ft_nbword(s, ' ') + 1);
@@ -65,14 +69,13 @@ char	**ft_get_text(char *s)
 		while (s[i] == '\t' || s[i] == ' ')
 			i++;
 		j = i;
-		while (s[i] != '\t' && s[i] != ' ') 
+		while (s[i] != '\t' && s[i] != ' ')
 			i++;
 		jndx = 0;
 		tab[indx] = malloc(sizeof(char *) * (i - j) + 1);
-		while (j < i)
+		while (j++ < i)
 		{
 			tab[indx][jndx] = s[j];
-			j++;
 			jndx++;
 		}
 		indx++;
@@ -94,8 +97,7 @@ int	ft_is_that_char(const char *s, int c)
 	return (ft_strlen(s));
 }
 
-
-int there_is_equal(char *s)
+int	there_is_equal(char *s)
 {
 	int	i;
 
@@ -109,9 +111,9 @@ int there_is_equal(char *s)
 	return (0);
 }
 
-int find_that_char(char *s, char c)
+int	find_that_char(char *s, char c)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (s[i])

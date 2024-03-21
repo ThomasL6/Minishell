@@ -12,14 +12,14 @@
 
 #include "../include/minishell.h"
 
-int cmp_len(char *s1, char *s2)
+int	cmp_len(char *s1, char *s2)
 {
-    if(!s1 || !s2)
-        return(0);
-    if(ft_strlen(s1) == ft_strlen(s2))
-        return(1);
-    else
-        return(0);
+	if (!s1 || !s2)
+		return (0);
+	if (ft_strlen(s1) == ft_strlen(s2))
+		return (1);
+	else
+		return (0);
 }
 
 int	find_equal(char *s)
@@ -43,9 +43,10 @@ int	find_equal(char *s)
 
 char	*ft_dup_name(char *env)
 {
-	char 	*name;
-	int		i = 0;
+	char	*name;
+	int		i;
 
+	i = 0;
 	name = malloc(sizeof(char *) * find_equal(env) + 1);
 	if (!name)
 		return (NULL);
@@ -54,7 +55,7 @@ char	*ft_dup_name(char *env)
 		while (env[i] != '\0')
 		{
 			if (env[i] == '=')
-				break;
+				break ;
 			name[i] = env[i];
 			i++;
 		}
@@ -65,9 +66,9 @@ char	*ft_dup_name(char *env)
 
 char	*ft_dup_value(char *env)
 {
-	char *value;
-	int	i;
-	int	j;
+	char	*value;
+	int		i;
+	int		j;
 
 	value = malloc(sizeof(char *) * ft_strlen(env) - find_equal(env) + 1);
 	if (!value)
@@ -93,10 +94,8 @@ int	is_empty(char *s)
 	{
 		if (s[i] == '\t' || s[i] == ' ')
 			i++;
-		else 
+		else
 			return (1);
 	}
 	return (0);
 }
-
-
