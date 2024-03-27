@@ -60,6 +60,7 @@ char	**ft_get_text(char *s)
 	int		indx;
 	int		jndx;
 
+	i = 0;
 	indx = 0;
 	tab = malloc(sizeof(char **) * ft_nbword(s, ' ') + 1);
 	if (!s)

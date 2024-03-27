@@ -44,7 +44,6 @@ char	*get_my_env(char *name, char **env)
 	i = 0;
 	ret = NULL;
 	str_env = NULL;
-
 	while (env[i])
 	{
 		str_env = ft_split(env[i], '=');
@@ -76,6 +75,7 @@ char	*build_exec_path(char *path, char *cmd)
 
 char	*get_path_tab(char *input, char **env)
 {
+	char 	*tmp;
 	char	**path;
 	char	**s_cmd;
 	char	*exec_path;
@@ -84,10 +84,12 @@ char	*get_path_tab(char *input, char **env)
 	path = NULL;
 	if (access(input, F_OK | X_OK) == 0)
 		return (ft_strdup(input));
-	path = ft_split(get_my_env("PATH=", env), ':');
+	tmp = get_my_env("PATH=", env);
+	path = ft_split(tmp, ':');
+	free(tmp);
 	s_cmd = ft_split(input, ' ');
-	i = 0;
-	while (path && path[i])
+	i = -1;
+	while (path && path[++i])
 	{
 		exec_path = build_exec_path(path[i], s_cmd[0]);
 		if (access(exec_path, F_OK | X_OK) == 0)
@@ -97,7 +99,6 @@ char	*get_path_tab(char *input, char **env)
 			return (exec_path);
 		}
 		free(exec_path);
-		i++;
 	}
 	free_tab(s_cmd);
 	free_tab(path);

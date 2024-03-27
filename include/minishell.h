@@ -60,7 +60,7 @@ typedef struct s_base
 	int		terminal_out;
 	int		fd_out;
 	int		fd_in;
-	int		ft_custom_exit;
+	// int		ft_custom_exit;
 	char	*env_path;
 	int		flag_redir;
 	int		loop;
@@ -113,7 +113,7 @@ char	*get_var_env(t_env *chain, char *name);
 		/*listchained2*/
 void	add_link(t_env **chain, char *env);
 void	add_more_link(t_env **chain, char *env);
-void	initial_chain(t_env **chain, char **env, t_base *base);
+void	initial_chain(t_env **chain, char **env);
 void	print_list_env(t_env *env_struct, t_base *base);
 
 	/*-list-*/
@@ -205,13 +205,11 @@ void	child_routin(int pipefd[2], char *eof, char *buf);
 
 int		ft_tablen(char **tab);
 int		nb_char(char *s);
-int		correct_redirection_len(char *av);
 int		no_command(char **av);
 int		only_one_type_redir(char **tab);
 char	*get_my_env(char *name, char **env);
 char	*build_exec_path(char *path, char *cmd);
 char	*get_path_tab(char *input, char **env);
-char	*correct_redirection(char *av);
 void	free_tab(char **tab);
 void	error(int i, t_base *base);
 void	fd_change(t_base *base);
@@ -241,5 +239,18 @@ void	gest_dollar(t_base *base, int j, int m);
 void	gest_dollar_multipipe(t_base *base);
 char	*remove_simple_quote(char *s);
 void	tab_printf(char **tab);
+
+int		correct_pipe_len(char *av);
+int		correct_redirection_len(char *av);
+char	*correct_pipe(char *av);
+char 	*correct_pipe_for_parser(char *s);
+char	*correct_redirection(char *av);
+char 	*correct_input_for_parser(char *s);
+char	 *init_input(char *s);
+int		here_doc(char *eof, t_base *base);
+void	execute_pipeline(char ***command, int nb_cmds, t_base *base);
+void	gest_pipe_and_redir2(t_base *base, char ***command, int i);
+void	get_input_tab_spe(t_base *base, char **command);
+void	free_long_tab(char ***tab);
 
 #endif

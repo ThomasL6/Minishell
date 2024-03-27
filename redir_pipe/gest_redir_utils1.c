@@ -12,55 +12,6 @@
 
 #include "../include/minishell.h"
 
-int	correct_redirection_len(char *av)
-{
-	char	*ret;
-	int		i;
-	int		j;
-
-	i = 0;
-	j = 0;
-	ret = malloc(sizeof(char) * BUFFER_SZ);
-	while (av[i])
-	{
-		if (av[i] == '>' || av[i] == '<')
-		{
-			ret[j++] = ' ';
-			while (av[i] == '>' || av[i] == '<')
-				ret[j++] = av[i++];
-			ret[j++] = ' ';
-		}
-		else
-			ret[j++] = av[i++];
-	}
-	free(ret);
-	return (j);
-}
-
-char	*correct_redirection(char *av)
-{
-	char	*ret;
-	int		i;
-	int		j;
-
-	i = 0;
-	j = 0;
-	ret = malloc(sizeof(char) * BUFFER_SZ);
-	while (av[i])
-	{
-		if (av[i] == '>' || av[i] == '<')
-		{
-			ret[j++] = ' ';
-			while (av[i] == '>' || av[i] == '<')
-				ret[j++] = av[i++];
-			ret[j++] = ' ';
-		}
-		else
-			ret[j++] = av[i++];
-	}
-	return (ret);
-}
-
 int	only_one_type_redir(char **tab)
 {
 	int	i;
@@ -86,4 +37,50 @@ int	only_one_type_redir(char **tab)
 		i++;
 	}
 	return (1);
+}
+
+int	here_doc(char *eof, t_base *base)
+{
+	char	*buf;
+	pid_t	pid;
+	int		pipefd[2];
+
+	(void)base;
+	buf = NULL;
+	if (pipe(pipefd) == -1)
+		return (-1);
+	pid = fork();
+	if (pid == -1)
+		return (-1);
+	if (pid == 0)
+		child_routin(pipefd, eof, buf);
+	close(pipefd[1]);
+	base->return_value = waitpid(pid, NULL, 0);
+	return (pipefd[0]);
+}
+
+void	child_routin(int pipefd[2], char *eof, char *buf)
+{
+	int	nb;
+
+	close(pipefd[0]);
+	buf = malloc(sizeof(char **) + BUFFER_SZ);
+	while (buf)
+	{
+		write(1, "> ", 2);
+		nb = read(0, buf, BUFFER_SZ);
+		if (nb == -1)
+		{
+			perror("here_doc");
+			continue ;
+		}
+		buf[nb - 1] = 0;
+		if (ft_strcmp(eof, buf) == 0)
+			break ;
+		write(pipefd[1], buf, ft_strlen(buf));
+		write(pipefd[1], "\n", 1);
+	}
+	free(buf);
+	close(pipefd[1]);
+	exit(0);
 }

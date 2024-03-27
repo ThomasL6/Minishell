@@ -51,10 +51,10 @@ int	ft_spe_execve2(char **av, char **tab, t_base *base)
 	}
 	base->return_value = execve(base->env_path, av, tab);
 	free_tab(av);
-	dprintf(base->ft_custom_exit, "ft_exec : execve failed\n");
 	dup2(fd_tmp2, 0);
 	dup2(fd_tmp, 1);
 	close(base->fd_out);
+	close(base->fd_in);
 	exit(EXIT_FAILURE);
 }
 
@@ -68,17 +68,14 @@ int	ft_spe_execve(char **av, char **tab, t_base *base)
 		return (-1);
 	if (pid == 0)
 		ft_spe_execve2(av, tab, base);
-	else 
+	else
 	{
-	    waitpid(pid, &status, 0);
-        if (WIFEXITED(status))
-            base->return_value = WEXITSTATUS(status);
+		waitpid(pid, &status, 0);
+		if (WIFEXITED(status))
+			base->return_value = WEXITSTATUS(status);
 	}
 	if (base->flag_redir == 1)
-	{
-		// write(base->fd_out, "\n", 1); // why is it there ???
 		base->flag_redir = -1;
-	}
 	dup2(1, base->fd_out);
 	dup2(0, base->fd_in);
 	return (0);

@@ -51,76 +51,6 @@ void	gest_pipe_and_redir2(t_base *base, char ***command, int i)
 	return ;
 }
 
-
-void execute_pipeline(char ***command, int nb_cmds, t_base *base)
-{
-	pid_t pid;
-	int prev_pipe_read;
-	int pipefd[2];
-	int i;
-
-	i = 0;
-	prev_pipe_read = base->fd_in;
-	while (i < nb_cmds)
-	{
-		if (i < nb_cmds - 1)
-		{
-			if (pipe(pipefd) < 0)
-			{
-				perror("pipe");
-				exit(EXIT_FAILURE);
-			}
-		}
-		pid	 = fork();
-		if (pid == -1)
-		{
-			perror("fork");
-			exit(EXIT_FAILURE);
-		}
-		else if (pid == 0)
-		{
-			if (i != 0)
-			{
-				if (dup2(prev_pipe_read, base->fd_in) == -1)
-				{
-					perror("dup2");
-					exit(EXIT_FAILURE);
-				}
-				close(prev_pipe_read);
-			}
-			if (i < nb_cmds - 1)
-			{
-				if (dup2(pipefd[1], base->fd_out) == -1)
-				{
-					perror("dup2");
-					exit(EXIT_FAILURE);
-				}
-			}
-			if (is_there_redir(command[i]) != 0)
-				gest_pipe_and_redir2(base, command, i);
-			else
-			{
-				get_file_inpout(base, command[i], i);
-				get_command(command, i, base);
-			}
-			close(pipefd[0]);
-			close(pipefd[1]);
-			// ft_exec_prog(command[i], base);
-			exit(EXIT_FAILURE);
-		}
-		else
-		{
-			wait(NULL);
-			if (i < nb_cmds - 1)
-			{
-				close(pipefd[1]);
-				prev_pipe_read = pipefd[0];
-			}
-		}
-		i++;
-	}
-}
-
 void	fd_change(t_base *base)
 {
 	if (base->tableau[0][1] == NULL)
@@ -131,7 +61,7 @@ void	fd_change(t_base *base)
 	else if (base->tableau[0][2] != NULL)
 	{
 		dprintf(base->fd_out, "Error - too many arguments\n");
-		dprintf(base->ft_custom_exit, "Error - too many arguments\n");
+		// dprintf(base->ft_custom_exit, "Error - too many arguments\n");
 		return ;
 	}
 	else
@@ -160,38 +90,12 @@ void	get_file_inpout(t_base *base, char **av, int i)
 	}
 }
 
-
-char *correct_input_for_parser(char *s)
-{
-	char *str;
-	char *tmp;
-	int i = 0;
-	int j = 0;
-
-	tmp = correct_redirection(s);
-	str = malloc(sizeof(char) * correct_redirection_len(s) + 1);
-	while (i < correct_redirection_len(s) && tmp[i] != '\0')
-	{
-		if ((tmp[0] == ' ' || tmp[0] == '\t') && i == 0 && j == 0)
-			i++;
-		else
-		{
-			str[j] = tmp[i];
-			i++;
-			j++;
-		}
-	}
-	str[j] = '\0';
-	free(tmp);
-	return (str);
-}
-
 int	hm_ultra_tab(char ***tab)
 {
 	int i;
 
 	i = 0;
-	while (tab[i])/* != NULL)*/
+	while (tab[i])
 		i++;
 	return (i);
 }
@@ -215,7 +119,7 @@ void	get_command(char ***tableau, int j, t_base *base)
 		else if (ft_strcmp("unset", tableau[j][0]) == 0)
 			ft_unset(base);
 		else if (ft_strcmp("exit", tableau[j][0]) == 0)
-			error(0, base);
+			ft_exit(base);
 		else if (!ft_exec_prog(tableau[j], base))
 		{
 			ft_putstr_fd(base->tableau[j][0], base->fd_out);
@@ -223,37 +127,6 @@ void	get_command(char ***tableau, int j, t_base *base)
 			base->return_value = 127;
 		}
 	}
-}
-
-
-char *put_space_at_pipe(char *s)
-{
-	char *ret;
-	int i;
-	int j;
-
-	i = 0;
-	j = 0;
-	ret = malloc(sizeof(char) * ft_strlen(s) + 1);
-	while (s[i])
-	{
-		if (s[i] == '|')
-		{
-			ret[j] = ' ';
-			j++;
-			ret[j] = '|';
-			j++;
-			ret[j] = ' ';
-		}
-		else
-		{
-			ret[j] = s[i];
-		}
-		i++;
-		j++;
-	}
-	ret[j] = '\0';
-	return (ret);
 }
 
 void	parser(t_base *base)
@@ -265,8 +138,7 @@ void	parser(t_base *base)
 	}
 	dup2(base->terminal_in, base->fd_in);
 	dup2(base->terminal_out, base->fd_out);
-	base->input = correct_input_for_parser(base->input);
-	base->input = put_space_at_pipe(base->input);
+	base->input = init_input(base->input);//
 	if (find_pipe(base->input) == -1)
 		get_input_tab(base, 0);
 	else
@@ -283,3 +155,4 @@ void	parser(t_base *base)
 	dup2(base->terminal_in, base->fd_out);
 	dup2(base->terminal_out, base->fd_in);
 }
+

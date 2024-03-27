@@ -113,6 +113,7 @@ char *ft_extract_word(const char *s, int size)
 
 char **ft_super_split(char const *s)
 {
+	int k;
     int j = 0;
     int word_count = ft_super_countwords(s);
     char **strs = (char **)malloc((word_count + 1) * sizeof(char *));
@@ -128,9 +129,13 @@ char **ft_super_split(char const *s)
         strs[j] = ft_extract_word(s, word_size);
         if (!strs[j])
         {
+			k = 0;
             // Gestion d'erreur : libérer la mémoire allouée précédemment
-            for (int k = 0; k < j; k++)
+			while (k < j)
+			{
                 free(strs[k]);
+				k++;				
+			}
             free(strs);
             return NULL;
         }
@@ -328,20 +333,20 @@ void	ft_loop(char *s)
 
 int main(void)
 {
-	int i;
-	char *s;
+	// int i;
+	// char *s;
 
-	while(1)
-	{
-		i = 0;
-		s = readline("minishell$ ");
-		if (s == NULL)
-			break;
-		if (strncmp(s, "exit", 4) == 0)
-			break;
-		ft_loop(s);
-		free(s);
-	}
+	// while(1)
+	// {
+		// i = 0;
+		readline("sa");
+		// if (s == NULL)
+			// break;
+		// if (strncmp(s, "exit", 4) == 0)
+			// break;
+		// ft_loop(s);
+		// free(s);
+	// }
 }
 
 // void	parser(t_base *base)

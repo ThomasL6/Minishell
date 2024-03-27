@@ -25,6 +25,9 @@ void	ft_free_tab(char **str)
 	free(str);
 }
 
+// if chdir(fileName) failed
+// -> perror(filename);
+
 void	own_cd(char *str, t_base *base)
 {
 	char	**s;
@@ -35,8 +38,7 @@ void	own_cd(char *str, t_base *base)
 		x = chdir(get_var_env(base->env, "HOME="));
 	if (s[2] != NULL)
 	{
-		ft_putstr_fd("Error: too many arguments\n", base->fd_out);
-		// perror("Error: too many arguments");
+		perror(s[1]);
 		ft_free_tab(s);
 		base->return_value = 1;
 		return ;
@@ -49,7 +51,6 @@ void	own_cd(char *str, t_base *base)
 			if (x == -1)
 			{
 				base->return_value = 1;
-				printf("ret value = %d\n", base->return_value);
 				perror(s[1]);
 				ft_free_tab(s);
 				return ;

@@ -12,31 +12,6 @@
 
 #include "include/minishell.h"
 
-// void	ft_exit(t_base *base)
-// {
-// 	if (base->input != NULL)
-// 		free(base->input);
-// 	if (base->user != NULL)
-// 		free(base->user);
-// 	if (base->cur_pwd != NULL)
-// 		free(base->cur_pwd);
-// 	if (base->env != NULL)
-// 		free_chain(base->env);
-// 	if (base->env_old != NULL)
-// 		free(base->env_old);
-// 	if (base->output_file != NULL)
-// 		free(base->output_file);
-// 	if (base->env_path != NULL)
-// 		free(base->env_path);
-// 	if (base->command != NULL)
-// 		free(base->command);
-// 	if (base->tableau != NULL)
-// 		free(base->tableau);
-// 	close(base->ft_custom_exit);
-// 	exit(g_signal);
-
-// }
-
 void	ms_exit_message(t_base *base)
 {
 	ft_putstr_fd("exit", base->fd_out);
@@ -80,17 +55,62 @@ void    free_chain(t_env **chain, t_base *base)
 	while (link)
 	{
 		ptr = link->next;
+		free(link->value);
+		free(link->name);
 		free(link);
 		link = ptr;
 	}
 	*chain = NULL;
 }
 
+void	free_long_tab(char ***tab)
+{
+	int i;
+	int j;
+
+	i = 0;
+	if (!tab)
+		return ;
+	j = 0;
+	while (tab[i])
+	{
+		j = 0;
+		while (tab[i][j])
+		{
+			free(tab[i][j]);
+			j++;
+		}
+		free(tab[i]);
+		i++;
+	}
+}
+
+void	free_base(t_base *base)
+{
+	if (base->tableau)
+		free(base->tableau);
+	if (base->input)
+		free(base->input);
+	if (base->user)
+		free(base->user);
+	if (base->output_file)
+		free(base->output_file);
+	if (base->command)
+		free(base->command);
+	close(base->terminal_in);
+	close(base->terminal_out);
+	close(base->fd_out);
+	close(base->fd_in);
+	// close(base->ft_custom_exit);
+	if (base->env_path)
+		free(base->env_path);
+	free_chain(&base->env, base);
+}
+
 void	ft_exit(t_base *base)
 {
-	ft_putstr_fd("-- closed Minishell --\n", base->ft_custom_exit);
-	free_chain(&base->env, base);
+	// ft_putstr_fd("-- closed Minishell --\n", base->ft_custom_exit);
+	free_base(base);
 	message(1, base);
-	free(base->user);
 	exit(0);
 }

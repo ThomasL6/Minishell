@@ -19,6 +19,7 @@ char	*ft_shlvl_var(char *s2)
 	i = ft_atoi(s2);
 	i++;
 	s2 = ft_itoa(i);
+	i = 0;
 	return (s2);
 }
 

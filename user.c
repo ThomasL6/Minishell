@@ -12,24 +12,33 @@
 
 #include "include/minishell.h"
 
-void	init_user2(char *s, char *tmp, int k, t_base *base)
+void    init_user2(char *s, char *tmp, int k, t_base *base)
 {
-	int	i;
-	int	j;
+    int        i;
+    int        j;
+    char    *tmp2;
+    char    *usertmp;
 
-	i = 6;
-	j = 0;
-	while (i < k)
-	{
-		tmp[j] = s[i];
-		i++;
-		j++;
-	}
-	tmp[j] = '\0';
-	free(s);
-	base->user = ft_strjoin(get_var_env(base->env, "USER="), "@");
-	base->user = ft_strjoin(base->user, tmp);
-	base->user = ft_strjoin(base->user, ":~$ ");
+    i = 6;
+    j = 0;
+    while (i < k)
+    {
+        tmp[j] = s[i];
+        i++;
+        j++;
+    }
+    tmp[j] = '\0';
+    tmp2 = get_var_env(base->env, "USER=");
+    base->user = ft_strjoin(tmp2, "@"); // malloc 1
+    usertmp = base->user; // usertmp = malloc 1
+    base->user = ft_strjoin(base->user, tmp); // malloc 2
+    free(usertmp); // free(malloc 1);
+    usertmp = base->user; // usertmp = malloc 2
+    base->user = ft_strjoin(usertmp, ":~$ "); // malloc 3
+    free(usertmp); // free(malloc 2)
+    free(tmp2);
+    free(tmp);
+    free(s);
 }
 
 void	init_user(t_base *base)

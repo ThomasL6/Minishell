@@ -47,15 +47,6 @@ int	ft_parser(char *s)
 	return (1);
 }
 
-
-void    gest_intp(t_base *base)
-{
-	add_history(base->input);
-	if (chk_directory(base) == 0 && base->input != NULL)
-		free(base->input);
-	parser(base);
-}
-
 void	triple_free_tab(char ***tab)
 {
 	int i;
@@ -84,18 +75,20 @@ void	ft_loop(t_base *base)
 	while (1)
 	{
 		base->return_value_flag = 0;
-		init_user(base);
 		base->input = readline(base->user);
 		if (base->input == NULL)
 		{
 			g_signal = 255;
 			break ;
-			//ft_exit(&base->env);
 		}
 		else if (is_empty(base->input) == 0)
-			continue;
+		{
+			free(base->input);
+			continue ;
+		}	
 		base->loop++;
-		gest_intp(base);
+		add_history(base->input);
+		parser(base);
 	}
 	ft_exit(base);
 }
@@ -103,8 +96,9 @@ void	ft_loop(t_base *base)
 void	init_base(t_base *base, char **env)
 {
 	base->tableau = malloc(sizeof(char ***) * 1);
+	base->tableau[0] = NULL;
 	base->input = NULL;
-	base->user = NULL;
+	base->user = NULL;//
 	base->cur_pwd = NULL;
 	base->env_old = env;
 	base->output_file = NULL;
@@ -114,7 +108,7 @@ void	init_base(t_base *base, char **env)
 	base->terminal_out = dup(0);
 	base->fd_in = dup(1);
 	base->fd_out = dup(0);
-	base->ft_custom_exit = open("debug.txt", O_CREAT | O_RDWR | O_TRUNC, 0644);
+	// base->ft_custom_exit = open("debug.txt", O_CREAT | O_RDWR | O_TRUNC, 0644);
 	base->env_path = NULL;
 	base->flag_redir = 0;
 	base->return_value = 0;
@@ -136,13 +130,14 @@ int	main(int ac, char **av, char **env)
 
 	base = malloc(sizeof(t_base));
 	init_base(base, env);
-	ft_putstr_fd("-- opened Minishell --\n", base->ft_custom_exit);
-	initial_chain(&base->env, env, base); // clone env
+	// ft_putstr_fd("-- opened Minishell --\n", base->ft_custom_exit);
+	initial_chain(&base->env, env); // clone env
 	init_user(base);
 	
 	ft_loop(base); // loop
 	rl_clear_history(); // clear historic
 	ft_exit(base); // exit
-
 	return (0);
 }
+
+

@@ -69,7 +69,7 @@ int tablen_pipe(char **tab, int i)
 	j = i;
 	if (!tab)
 		return (0);
-    while (tab[j] != NULL && strcmp(tab[j], "|") != 0)
+    while (tab[j] != NULL && ft_strcmp(tab[j], "|") != 0)
 	{
 		if (tab[j + 1] == NULL)
 			return ((j - i) + 1);

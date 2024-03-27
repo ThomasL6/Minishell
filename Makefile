@@ -10,7 +10,7 @@
 #                                                                              #
 # **************************************************************************** #
 
-CC = gcc 
+CC = cc 
 NAME = minishell
 CFLAGS = -Wall -Wextra -Werror -g3
 
@@ -33,19 +33,24 @@ SRCS = main.c \
 	lists/listchained.c \
 	lists/listchained2.c \
 	parse/parser.c \
-	parse/gest_redir_utils.c \
-	parse/gest_redir_utils1.c \
-	parse/gest_redir.c \
 	parse/parser_error.c \
 	parse/parser_utils.c \
 	parse/parser_utils2.c \
 	parse/parser_utils3.c \
+	parse/parser_utils4.c\
+	parse/parser_utils5.c\
 	parse/token.c \
 	parse/token2.c \
+	redir_pipe/gest_redir.c \
+	redir_pipe/gest_pipeline.c\
+	redir_pipe/gest_redir_utils.c \
+	redir_pipe/gest_redir_utils1.c \
 	Utils/utils.c \
 	Utils/utils2.c \
 	Utils/utils3.c \
 	user.c \
+	parse/init_input_parser.c \
+	parse/init_input_parser2.c \
 
 
 OBJS = $(SRCS:.c=.o)

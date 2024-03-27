@@ -37,9 +37,9 @@ void	print_list_env(t_env *env_struct, t_base *base)
 
 void	ft_print_env(t_base *base, char *name, int srt, int end)
 {
-	if (NULL == &base->env)
+	if (!base->env)
 		return ;
-	while (&base->env)
+	while (base->env)
 	{
 		if (ft_strcmp_spe(name, base->env->name, srt, end) == 0)
 		{

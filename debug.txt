@@ -1,17 +1,2 @@
 -- opened Minishell --
-tableau[0][0] = cd
-tableau[0][1] = ..
-tableau[0][2] = (null)
-tableau[0][0] = ls
-tableau[0][1] = (null)
-in ft_exec
-about to execute ||
-1
-execute done
-tableau[0][0] = pwd
-tableau[0][1] = (null)
-tableau[0][0] = cd
-tableau[0][1] = ..
-tableau[0][2] = (null)
-tableau[0][0] = pwd
-tableau[0][1] = (null)
+-- closed Minishell --

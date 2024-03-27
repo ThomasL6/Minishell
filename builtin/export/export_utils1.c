@@ -87,7 +87,7 @@ char	**ft_super_split(char const *s)
 	k = 0;
 	j = 0;
 	word_count = ft_super_countwords(s);
-	strs = (char **)malloc((word_count + 1) * sizeof(char *));
+	strs = malloc((word_count + 1) * sizeof(char *));
 	if (!strs)
 		return (NULL);
 	while (*s && j < word_count)

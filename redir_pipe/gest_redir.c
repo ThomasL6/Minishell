@@ -12,32 +12,54 @@
 
 #include "../include/minishell.h"
 
-char	**get_exec(char **tab)
+void	free_tab_get_exec(char **tab)
 {
-	char	**ret;
-	int		k;
-	int		i;
-	int		j;
+	int i;
 
 	i = 0;
-	k = 0;
-	ret = NULL;
-	if (!tab)
-		return (NULL);
-	while (tab[i] && ft_find_redirection(tab[i]) != 0)
-		i += 2;
-	j = i;
-	while (tab[j] && ft_find_redirection(tab[j]) == 0)
-		j++;
-	ret = (char **)malloc(sizeof(char *) * (j - i + 1));
-	while (i < j)
+    if (tab)
+    {
+		while (tab[i] != NULL)
+		{
+            free(tab[i]);
+			i++;
+        }
+        free(tab);
+    }
+}
+
+char	**get_exec(char **tab)
+{
+    char	**ret;
+    int		k;
+    int		i;
+    int		j;
+
+    i = 0;
+    k = 0;
+    ret = NULL;
+    if (!tab)
+        return (NULL);
+    while (tab[i] && ft_find_redirection(tab[i]) != 0)
+        i += 2;
+    j = i;
+    while (tab[j] && ft_find_redirection(tab[j]) == 0)
+        j++;
+    ret = (char **)malloc(sizeof(char *) * (j - i + 1));
+	if (!ret)
 	{
-		ret[k] = ft_strdup(tab[i]);
-		i++;
-		k++;
+		perror("fuck you get exec");
+		return (NULL);
 	}
-	ret[k] = NULL;
-	return (ret);
+     while (i < j)
+    {
+        ret[k] = ft_strdup(tab[i]);
+        i++;
+        k++;
+    }
+    ret[k] = NULL;
+    free_tab_get_exec(tab);
+    return (ret);
 }
 
 void	set_output(char **str, t_base *base)

@@ -66,7 +66,7 @@ char	*check_last_pipe(char *s)
 	if (s[i - 1] != '|')
 	{
 		ret = malloc(sizeof(char) * (i + 3));
-		ret = strdup(s);
+		ret = ft_strdup(s);
 		ret[i] = ' ';
 		ret[i + 1] = '|';
 		ret[i + 2] = '\0';
@@ -97,7 +97,7 @@ void	gest_dollar_multipipe(t_base *base)
 
 	i = 0;
 	j = 0;
-	while (base->tableau[i])
+	while (base->tableau && base->tableau[i])
 	{
 		while (base->tableau[i][j])
 		{
