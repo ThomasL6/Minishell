@@ -86,6 +86,7 @@ void	ft_basic_redir(char **av, t_base *base, int j)
 		free(tmp);
 		return ;
 	}
+	free(tmp);
 	i++;
 	base->fd_out = open(base->tableau[j][i],
 			O_WRONLY | O_CREAT | O_TRUNC, 0644);

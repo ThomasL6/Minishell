@@ -91,8 +91,8 @@ void	get_input_tab2(t_base *base, int i, int j)
 				if (ft_strncmp(base->tableau[i][j], "$?", 2) == 0)
 					base->tableau[i][j] = ft_strdup
 						(ft_itoa(base->return_value));
-				else
-					gest_dollar(base, j, i);
+				// else
+					// gest_dollar(base, j, i);
 			}
 		}
 		else if (base->tableau[i][j][0] == '\'')

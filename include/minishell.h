@@ -88,7 +88,7 @@ int		get_pwd(t_base *base);
 	/*-exit-*/
 void	exit_prog(int i, void *ptr, t_base *base);
 void	free_chain(t_env **chain, t_base *base);
-void	ft_exit(t_base *base);
+void	ft_exit(t_base *base, int i);
 
 	/*-utils-*/
 int		cmp_len(char *s1, char *s2);

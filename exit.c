@@ -102,15 +102,27 @@ void	free_base(t_base *base)
 	close(base->fd_out);
 	close(base->fd_in);
 	// close(base->ft_custom_exit);
-	if (base->env_path)
-		free(base->env_path);
 	free_chain(&base->env, base);
 }
 
-void	ft_exit(t_base *base)
+void	ft_exit(t_base *base, int i)
 {
-	// ft_putstr_fd("-- closed Minishell --\n", base->ft_custom_exit);
-	free_base(base);
-	message(1, base);
-	exit(0);
+
+	if (i == 2)
+	{
+		free_base(base);
+		message(1, base);
+		exit(0);
+	}
+	else if (base->tableau[i][0])
+	{
+		if (base->tableau[i][1] == NULL)
+		{
+			free_base(base);
+			message(1, base);
+			exit(0);
+		}
+	}
+	ft_putstr_fd("exit: too many arguments\n", base->fd_out);
+	return ;
 }

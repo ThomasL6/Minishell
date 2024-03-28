@@ -11,30 +11,7 @@
 /* ************************************************************************** */
 #include "../include/minishell.h"
 
-int	chk_pipe_start(char *s) // return 1 if the first char is a pipe
-{
-	int	i;
 
-	i = 0;
-	while (s[i] == ' ' || s[i] == '\t' || s[i] == '\n')
-		i++;
-	if (s[i] == 124)
-		return (1);
-	return (0);
-}
-
-int	chk_pipe_end(char *s)
-{
-	int	i;
-
-	i = ft_strlen(s);
-	i--;
-	while (s[i] == ' ' || s[i] == '\t' || s[i] == '\n')
-		i--;
-	if (s[i] == '|')
-		return (1);
-	return (0);
-}
 
 // void	pipe_nb_com(t_base *base)
 // {

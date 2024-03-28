@@ -119,13 +119,32 @@ void	get_command(char ***tableau, int j, t_base *base)
 		else if (ft_strcmp("unset", tableau[j][0]) == 0)
 			ft_unset(base);
 		else if (ft_strcmp("exit", tableau[j][0]) == 0)
-			ft_exit(base);
+			ft_exit(base, j);
 		else if (!ft_exec_prog(tableau[j], base))
 		{
 			ft_putstr_fd(base->tableau[j][0], base->fd_out);
 			ft_putstr_fd(": command not found\n", base->fd_out);
 			base->return_value = 127;
 		}
+	}
+}
+
+void	print_tab(char ***tab)
+{
+	int i;
+	int j;
+
+	i = 0;
+	j = 0;
+	while (tab[i])
+	{
+		j = 0;
+		while (tab[i][j])
+		{
+			dprintf(1, "tab[%d][%d] = %s\n", i, j, tab[i][j]);
+			j++;
+		}
+		i++;
 	}
 }
 
@@ -143,8 +162,9 @@ void	parser(t_base *base)
 		get_input_tab(base, 0);
 	else
 	{
-		base->tableau = pre_build_tab(base, base->input);//, base);
-		gest_dollar_multipipe(base);
+		base->tableau = pre_build_tab(base, base->input);
+		print_tab(base->tableau);
+		// gest_dollar_multipipe(base);
 		execute_pipeline(base->tableau, hm_ultra_tab(base->tableau), base);
 		return ;
 	}

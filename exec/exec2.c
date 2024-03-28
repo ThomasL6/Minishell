@@ -20,9 +20,11 @@ void	free_tab(char **tab)
 	while (tab && tab[i])
 	{
 		free(tab[i]);
+		tab[i] = NULL;
 		i++;
 	}
 	free(tab);
+	tab = NULL;
 }
 
 int	ft_tablen(char **tab)
@@ -61,16 +63,29 @@ char	*get_my_env(char *name, char **env)
 	return (NULL);
 }
 
+// char	*build_exec_path(char *path, char *cmd)
+// {
+// 	char	*exec_path;
+// 	char	*tmp;
+
+// 	exec_path = ft_strjoin(path, "/");
+// 	tmp = ft_strjoin(exec_path, cmd);
+// 	free(exec_path);
+// 	return (tmp);
+// }
+
 char	*build_exec_path(char *path, char *cmd)
 {
-	char	*exec_path;
-	char	*tmp;
+	char *ret;
+	char *tmp;
+	char *tmp2;
 
-	exec_path = ft_strjoin(path, "/");
-	tmp = exec_path;
-	exec_path = ft_strjoin(exec_path, cmd);
+	tmp = ft_strjoin(path, "/");
+	tmp2 = ft_strjoin(tmp, cmd);
 	free(tmp);
-	return (exec_path);
+	ret = ft_strdup(tmp2);
+	free(tmp2);
+	return (ret);
 }
 
 char	*get_path_tab(char *input, char **env)
@@ -94,7 +109,7 @@ char	*get_path_tab(char *input, char **env)
 		exec_path = build_exec_path(path[i], s_cmd[0]);
 		if (access(exec_path, F_OK | X_OK) == 0)
 		{
-			free_tab(s_cmd);
+			free_tab(s_cmd); // Free s_cmd before returning
 			free_tab(path);
 			return (exec_path);
 		}
@@ -102,5 +117,7 @@ char	*get_path_tab(char *input, char **env)
 	}
 	free_tab(s_cmd);
 	free_tab(path);
+	free(exec_path);
 	return (NULL);
 }
+

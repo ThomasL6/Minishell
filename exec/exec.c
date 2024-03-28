@@ -97,9 +97,11 @@ int	ft_exec_prog(char **av, t_base *base)
 	if (base->env_path == NULL)
 	{
 		ft_putstr_fd("Failed to find executable\n", base->fd_out);
+		free(base->env_path);
 		return (0);
 	}
 	ft_exec(av, base->env_old, base);
+	free(base->env_path);
 	dup2(1, base->fd_out);
 	dup2(0, base->fd_in);
 	return (1);

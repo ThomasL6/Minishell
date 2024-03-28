@@ -51,7 +51,7 @@ char	**get_exec(char **tab)
 		perror("fuck you get exec");
 		return (NULL);
 	}
-     while (i < j)
+    while (i < j)
     {
         ret[k] = ft_strdup(tab[i]);
         i++;

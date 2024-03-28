@@ -46,7 +46,5 @@ char	*init_input(char *s)
 	free(s);
 	tmp = correct_pipe_for_parser(tmp2);
 	free(tmp2);
-	// s = correct_input_for_parser(s);
-
 	return (tmp);
 }

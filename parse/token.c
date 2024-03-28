@@ -51,6 +51,7 @@ char	***ft_ultra_split(char *s)
 	if (!tmp)
 		return (NULL);
 	tab = ft_ultra_while(0, 0, tab, tmp);
+	free_tab(tmp);
 	return (tab);
 }
 
@@ -94,10 +95,11 @@ void	gest_dollar_multipipe(t_base *base)
 {
 	int i;
 	int j;
+	char *tmp;
 
 	i = 0;
 	j = 0;
-	while (base->tableau && base->tableau[i])
+	while (base->tableau && base->tableau[i] != NULL)
 	{
 		while (base->tableau[i][j])
 		{
@@ -106,7 +108,11 @@ void	gest_dollar_multipipe(t_base *base)
 				if (is_there_char(base->tableau[i][j], '$') != 0)
 				{
 					if (ft_strncmp(base->tableau[i][j], "$?", 2) == 0)
-						base->tableau[i][j] = ft_strdup(ft_itoa(base->return_value));
+					{
+						tmp = ft_itoa(base->return_value);
+						base->tableau[i][j] = ft_strdup(tmp);
+						free(tmp);
+					}
 					else
 						gest_dollar(base, j, i);
 				}
@@ -120,7 +126,7 @@ void	gest_dollar_multipipe(t_base *base)
 	}
 }
 
-char ***pre_build_tab(t_base *base, char *s)//, t_base *base)
+char ***pre_build_tab(t_base *base, char *s)
 {
 	char	***tab;
 

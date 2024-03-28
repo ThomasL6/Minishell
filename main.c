@@ -27,26 +27,6 @@ void	received_signal(int n)
 		printf("\b\b  \b\b");
 }
 
-int	ft_parser(char *s)
-{
-	if (chk_quote(s) != 1)
-	{
-		printf("Error - Quotes are not closed,"); // should redo the phrasing
-		return (-1);
-	}
-	if (chk_pipe_start(s) == 1)
-	{
-		printf("Error - First character in string should not"); // should redo the phrasing
-		return (-2);
-	}
-	else
-	{
-		printf("Error - else condition does not exist\n");
-		return (0);
-	}
-	return (1);
-}
-
 void	triple_free_tab(char ***tab)
 {
 	int i;
@@ -70,6 +50,17 @@ void	triple_free_tab(char ***tab)
 	}
 }
 
+int	ft_parser(char *s)
+{
+	if (chk_quote(s) != 1)
+	{
+		printf("Error - Quotes are not closed\n"); // should redo the phrasing
+		return (0);
+	}
+	return (1);
+}
+
+
 void	ft_loop(t_base *base)
 {
 	while (1)
@@ -85,12 +76,22 @@ void	ft_loop(t_base *base)
 		{
 			free(base->input);
 			continue ;
-		}	
-		base->loop++;
-		add_history(base->input);
-		parser(base);
+		}
+		else if (ft_parser(base->input) != 1)
+		{
+			free(base->input);
+			continue ;
+		}
+		else
+		{
+			base->loop++;
+			add_history(base->input);
+			parser(base);
+			free(base->input);
+			free_tab(base->tableau[0]);
+		}
 	}
-	ft_exit(base);
+	ft_exit(base, 2);
 }
 
 void	init_base(t_base *base, char **env)
@@ -136,7 +137,7 @@ int	main(int ac, char **av, char **env)
 	
 	ft_loop(base); // loop
 	rl_clear_history(); // clear historic
-	ft_exit(base); // exit
+	ft_exit(base, 0); // exit
 	return (0);
 }
 
