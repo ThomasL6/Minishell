@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vamologl <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: vamologl <vamologl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 13:56:10 by vamologl          #+#    #+#             */
-/*   Updated: 2024/03/15 13:56:11 by vamologl         ###   ########.fr       */
+/*   Updated: 2024/04/01 15:01:10 by vamologl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,8 @@ void	gest_dollar_multipipe(t_base *base)
 	j = 0;
 	while (base->tableau && base->tableau[i] != NULL)
 	{
-		while (base->tableau[i][j])
+		while (base->tableau[i][j] <= 
+			(char *)ft_strlen(base->tableau[i][j]))
 		{
 			if (base->tableau[i][j][0] != '\'')
 			{
@@ -114,7 +115,7 @@ void	gest_dollar_multipipe(t_base *base)
 						free(tmp);
 					}
 					else
-						gest_dollar(base, j, i);
+						base->tableau[i][j] = gest_dollar(base->tableau[i][j], base);
 				}
 			}
 			else if (base->tableau[i][j][0] == '\'')

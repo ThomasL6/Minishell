@@ -106,7 +106,7 @@ char	*get_path_tab(char *input, char **env)
 	i = -1;
 	while (path && path[++i])
 	{
-		exec_path = build_exec_path(path[i], s_cmd[0]);
+		exec_path = build_exec_path(path[i], s_cmd[0]); /* */
 		if (access(exec_path, F_OK | X_OK) == 0)
 		{
 			free_tab(s_cmd); // Free s_cmd before returning
@@ -117,7 +117,7 @@ char	*get_path_tab(char *input, char **env)
 	}
 	free_tab(s_cmd);
 	free_tab(path);
-	free(exec_path);
+	// free(exec_path); /* */
 	return (NULL);
 }
 

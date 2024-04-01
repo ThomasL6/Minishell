@@ -50,17 +50,6 @@ void	triple_free_tab(char ***tab)
 	}
 }
 
-int	ft_parser(char *s)
-{
-	if (chk_quote(s) != 1)
-	{
-		printf("Error - Quotes are not closed\n"); // should redo the phrasing
-		return (0);
-	}
-	return (1);
-}
-
-
 void	ft_loop(t_base *base)
 {
 	while (1)
@@ -77,8 +66,9 @@ void	ft_loop(t_base *base)
 			free(base->input);
 			continue ;
 		}
-		else if (ft_parser(base->input) != 1)
+		else if (chk_quote(base->input) != 1)
 		{
+			printf("Error - Quotes are not closed\n"); // should redo the phrasing
 			free(base->input);
 			continue ;
 		}

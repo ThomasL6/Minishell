@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vamologl <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: vamologl <vamologl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 11:06:32 by vamologl          #+#    #+#             */
-/*   Updated: 2024/01/23 11:06:33 by vamologl         ###   ########.fr       */
+/*   Updated: 2024/04/01 15:00:52 by vamologl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,6 @@ void	change_pwd(t_base *base);
 
 	/*-builtin-*/
 	/*cd*/
-void	ft_free_tab(char **str);
 void	modif_path(t_base *base);
 void	modif_pwd(t_base *base, char *s);
 void	own_cd(char *str, t_base *base); //, t_base *base);
@@ -235,7 +234,7 @@ void	own_env(t_base *base, int i);
 int		hm_tab(char **tab);
 void	get_input_tab(t_base *base, int i);
 int		is_there_char(char *s, char c);
-void	gest_dollar(t_base *base, int j, int m);
+char	*gest_dollar(char *s, t_base *base);
 void	gest_dollar_multipipe(t_base *base);
 char	*remove_simple_quote(char *s);
 void	tab_printf(char **tab);
@@ -252,5 +251,6 @@ void	execute_pipeline(char ***command, int nb_cmds, t_base *base);
 void	gest_pipe_and_redir2(t_base *base, char ***command, int i);
 void	get_input_tab_spe(t_base *base, char **command);
 void	free_long_tab(char ***tab);
+char	*ft_sstrndup(char *s, int n, int start);
 
 #endif

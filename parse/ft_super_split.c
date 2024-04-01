@@ -1,34 +1,57 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   export_utils1.c                                    :+:      :+:    :+:   */
+/*   ft_super_split.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: thlefebv <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: vamologl <vamologl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/13 16:59:53 by thlefebv          #+#    #+#             */
-/*   Updated: 2024/03/13 16:59:55 by thlefebv         ###   ########.fr       */
+/*   Updated: 2024/03/29 15:37:52 by vamologl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/minishell.h"
+#include "../include/minishell.h"
+
+static inline int	is_quote(char c)
+{
+	return (c == '\"' || c == '\'');
+}
+
+static inline int	modif_edge(char c, char edge)
+{
+	if (edge == ' ')
+		return (c);
+	else if (c != edge)
+		return (edge);
+	else
+		return (' ');
+}
 
 int	ft_super_countwords(const char *s)
 {
-	int	count;
-	int	inside_word;
+	int		i;
+	int		count;
+	char	edge;
 
+	i = 0;
 	count = 0;
-	inside_word = 0;
-	while (*s)
+	while (i < (int)ft_strlen(s))
 	{
-		if (*s == ' ')
-			inside_word = 0;
-		else if (inside_word == 0)
+		edge = ' ';
+		while (s[i] == edge)
+			i++;
+		if (i >= (int)ft_strlen(s))
+			break ;
+		if (is_quote(s[i]))
+			edge = modif_edge(s[i++], edge);
+		count++;
+		while (i < (int)ft_strlen(s) && s[i] != ' ')
 		{
-			inside_word = 1;
-			count++;
+			if (is_quote(s[i]))
+				edge = modif_edge(s[i], edge);
+			i++;
 		}
-		s++;
+		i++;
 	}
 	return (count);
 }
@@ -42,17 +65,21 @@ const char	*ft_skip_spaces(const char *s)
 
 int	ft_get_word_size(const char *s)
 {
-	int	size;
-	int	insidequotes;
+	int		size;
+	char	quote;
 
-	insidequotes = 0;
+	quote = 0;
 	size = 0;
 	while (s[size])
 	{
-		if (s[size] == '\"')
-			insidequotes = !insidequotes;
-		else if (s[size] == ' ' && !insidequotes)
+		if (s[size] == '\"' && quote == 0)
+			quote = '\"';
+		else if (s[size] == '\'' && quote == 0)
+			quote = '\'';
+		else if (s[size] == ' ' && quote == 0)
 			break ;
+		else if (s[size] == quote)
+			quote = 0;
 		size++;
 	}
 	return (size);
@@ -82,9 +109,7 @@ char	**ft_super_split(char const *s)
 	int		j;
 	int		word_count;
 	int		word_size;
-	int		k;
 
-	k = 0;
 	j = 0;
 	word_count = ft_super_countwords(s);
 	strs = malloc((word_count + 1) * sizeof(char *));
@@ -99,8 +124,8 @@ char	**ft_super_split(char const *s)
 		strs[j] = ft_extract_word(s, word_size);
 		if (!strs[j])
 		{
-			while (k++ < j)
-				free(strs[k]);
+			while (j > -1)
+				free(strs[j--]);
 			free(strs);
 			return (NULL);
 		}

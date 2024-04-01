@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: vamologl <marvin@42.fr>                    +#+  +:+       +#+         #
+#    By: vamologl <vamologl@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/23 11:11:30 by vamologl          #+#    #+#              #
-#    Updated: 2024/01/23 11:11:34 by vamologl         ###   ########.fr        #
+#    Updated: 2024/03/29 15:35:02 by vamologl         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,6 @@ SRCS = main.c \
 	exit.c \
 	builtin/export/ft_export.c \
 	builtin/export/export_utils.c \
-	builtin/export/export_utils1.c \
 	builtin/ft_pwd.c \
 	builtin/ft_cd.c \
 	builtin/ft_echo.c \
@@ -32,6 +31,7 @@ SRCS = main.c \
 	exec/exec2.c\
 	lists/listchained.c \
 	lists/listchained2.c \
+	parse/ft_super_split.c \
 	parse/parser.c \
 	parse/parser_error.c \
 	parse/parser_utils.c \
@@ -89,7 +89,6 @@ fclear : clean
 #------------------------------------
 
 re : fclean all
-
 
 $(NAME) : $(OBJS)
 	@make -C libft

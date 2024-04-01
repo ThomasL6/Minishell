@@ -3,14 +3,35 @@
 /*                                                        :::      ::::::::   */
 /*   ft_echo.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vamologl <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: vamologl <vamologl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/02 14:09:18 by vamologl          #+#    #+#             */
-/*   Updated: 2024/02/02 14:09:19 by vamologl         ###   ########.fr       */
+/*   Updated: 2024/03/29 15:08:27 by vamologl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
+
+
+void	echo_putstr_fd(char *s, int fd)
+{
+	int	i;
+
+	i = 0;
+	if (s)
+	{
+		while (s[i])
+		{
+			if (s[i] == '\'' || s[i] == '\"')
+				i++;
+			else
+			{
+				write(fd, &s[i], 1);
+				i++;
+			}
+		}
+	}
+}
 
 int	is_env(char *s, t_base *base, int i)
 {
@@ -45,7 +66,7 @@ void    write_echo_alt(t_base *base, int i, int flag, int k)
 {
     while (base->tableau[k][i])
     {
-		ft_putstr_fd(base->tableau[k][i], base->fd_out);
+		echo_putstr_fd(base->tableau[k][i], base->fd_out);
 		if (base->tableau[k][i + 1])
 			ft_putchar_fd(' ', base->fd_out);
         i++;

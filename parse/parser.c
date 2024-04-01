@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vamologl <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: vamologl <vamologl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 11:06:26 by vamologl          #+#    #+#             */
-/*   Updated: 2024/01/23 11:06:28 by vamologl         ###   ########.fr       */
+/*   Updated: 2024/04/01 10:14:46 by vamologl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,12 +136,12 @@ void	print_tab(char ***tab)
 
 	i = 0;
 	j = 0;
-	while (tab[i])
+	while (i == 0 && tab[i])
 	{
 		j = 0;
 		while (tab[i][j])
 		{
-			dprintf(1, "tab[%d][%d] = %s\n", i, j, tab[i][j]);
+			printf("tab[%d][%d] = %s\n", i, j, tab[i][j]);
 			j++;
 		}
 		i++;
@@ -158,16 +158,18 @@ void	parser(t_base *base)
 	dup2(base->terminal_in, base->fd_in);
 	dup2(base->terminal_out, base->fd_out);
 	base->input = init_input(base->input);//
+	printf("base->input ==%s==\n", base->input);
 	if (find_pipe(base->input) == -1)
 		get_input_tab(base, 0);
 	else
 	{
 		base->tableau = pre_build_tab(base, base->input);
 		print_tab(base->tableau);
-		// gest_dollar_multipipe(base);
+		gest_dollar_multipipe(base);
 		execute_pipeline(base->tableau, hm_ultra_tab(base->tableau), base);
 		return ;
 	}
+	print_tab(base->tableau);
 	get_file_inpout(base, base->tableau[0], 0); // set in/out
 	base->tableau[0] = get_exec(base->tableau[0]); // get exec
 	get_command(base->tableau, 0, base);
@@ -175,4 +177,3 @@ void	parser(t_base *base)
 	dup2(base->terminal_in, base->fd_out);
 	dup2(base->terminal_out, base->fd_in);
 }
-

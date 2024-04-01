@@ -16,22 +16,22 @@ int	chk_quote(char *s)
 {
 	int	i;
 
-	i = 0;
-	while (s[i++] != 0)
+	i = -1;
+	while (s[++i] != 0)
 	{
-		if (s[i] == 39)
+		if (s[i] == '\'')
 		{
 			i++;
-			while (s[i] != 39)
+			while (s[i] != '\'')
 			{
 				if (s[i++] == 0)
 					return (0);
 			}
 		}
-		if (s[i] == '"')
+		if (s[i] == '\"')
 		{
 			i++;
-			while (s[i] != '"')
+			while (s[i] != '\"')
 			{
 				if (s[i++] == 0)
 					return (0);
