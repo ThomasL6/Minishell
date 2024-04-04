@@ -6,7 +6,7 @@
 /*   By: vamologl <vamologl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 13:56:10 by vamologl          #+#    #+#             */
-/*   Updated: 2024/04/01 15:01:10 by vamologl         ###   ########.fr       */
+/*   Updated: 2024/04/04 15:42:15 by vamologl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,6 @@ char	*check_last_pipe(char *s)
 	i = 0;
 	while (s[i])
 		i++;
-	printf("s[i] = %c\n", s[i - 1]);
 	if (s[i - 1] != '|')
 	{
 		ret = malloc(sizeof(char) * (i + 3));
@@ -71,7 +70,6 @@ char	*check_last_pipe(char *s)
 		ret[i] = ' ';
 		ret[i + 1] = '|';
 		ret[i + 2] = '\0';
-		// printf("ret = %s\n", ret);
 		return (ret);
 	}
 	else
@@ -95,31 +93,14 @@ void	gest_dollar_multipipe(t_base *base)
 {
 	int i;
 	int j;
-	char *tmp;
 
 	i = 0;
 	j = 0;
 	while (base->tableau && base->tableau[i] != NULL)
 	{
-		while (base->tableau[i][j] <= 
-			(char *)ft_strlen(base->tableau[i][j]))
+		while (base->tableau[i][j] != NULL)
 		{
-			if (base->tableau[i][j][0] != '\'')
-			{
-				if (is_there_char(base->tableau[i][j], '$') != 0)
-				{
-					if (ft_strncmp(base->tableau[i][j], "$?", 2) == 0)
-					{
-						tmp = ft_itoa(base->return_value);
-						base->tableau[i][j] = ft_strdup(tmp);
-						free(tmp);
-					}
-					else
-						base->tableau[i][j] = gest_dollar(base->tableau[i][j], base);
-				}
-			}
-			else if (base->tableau[i][j][0] == '\'')
-				base->tableau[i][j] = remove_simple_quote(base->tableau[i][j]);
+			base->tableau[i][j] = modif_token(base->tableau[i][j], base);
 			j++;
 		}
 		j = 0;
@@ -136,6 +117,7 @@ char ***pre_build_tab(t_base *base, char *s)
 	tab = ft_ultra_split(s);
 	if (!tab)
 		return (NULL);
+	(void)base;
 	gest_dollar_multipipe(base);
 	return (tab);
 }

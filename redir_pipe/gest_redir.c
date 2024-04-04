@@ -48,7 +48,7 @@ char	**get_exec(char **tab)
     ret = (char **)malloc(sizeof(char *) * (j - i + 1));
 	if (!ret)
 	{
-		perror("fuck you get exec");
+		perror("get_exec");
 		return (NULL);
 	}
     while (i < j)

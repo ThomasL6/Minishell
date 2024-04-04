@@ -6,7 +6,7 @@
 /*   By: vamologl <vamologl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 11:06:32 by vamologl          #+#    #+#             */
-/*   Updated: 2024/04/01 15:00:52 by vamologl         ###   ########.fr       */
+/*   Updated: 2024/04/04 15:30:44 by vamologl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,9 +64,8 @@ typedef struct s_base
 	char	*env_path;
 	int		flag_redir;
 	int		loop;
+	int		*tablen;
 
-	int		pipe;			// not currently used, for pipe implementation
-	int		**fd;			// not currently used, for pipe implementation
 	int		return_value;
 	int		return_value_flag;
 	t_env	*env;
@@ -170,7 +169,7 @@ int		find_that_char(char *s, char c);
 int		link_already_exist(t_env *chain, char *env);
 int		ft_super_countwords(char const *str);
 int		check_if_storable(char *s);
-char	**ft_super_split(char const *s);
+char	**ft_super_split(char *s);
 char	*ft_strndup(char *s, int n);
 void	ft_unset(t_base *base);
 void	remove_old_env(t_base *base, char *var_name);
@@ -252,5 +251,6 @@ void	gest_pipe_and_redir2(t_base *base, char ***command, int i);
 void	get_input_tab_spe(t_base *base, char **command);
 void	free_long_tab(char ***tab);
 char	*ft_sstrndup(char *s, int n, int start);
+char	*modif_token(char *s, t_base *base);
 
 #endif

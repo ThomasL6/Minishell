@@ -6,7 +6,7 @@
 /*   By: vamologl <vamologl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/13 16:59:53 by thlefebv          #+#    #+#             */
-/*   Updated: 2024/03/29 15:37:52 by vamologl         ###   ########.fr       */
+/*   Updated: 2024/04/04 15:56:11 by vamologl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ int	ft_super_countwords(const char *s)
 	return (count);
 }
 
-const char	*ft_skip_spaces(const char *s)
+char	*ft_skip_spaces(char *s)
 {
 	while (*s && *s == ' ')
 		s++;
@@ -85,7 +85,7 @@ int	ft_get_word_size(const char *s)
 	return (size);
 }
 
-char	*ft_extract_word(const char *s, int size)
+char	*ft_extract_word(char const *s, int size)
 {
 	char	*word;
 	int		i;
@@ -103,7 +103,7 @@ char	*ft_extract_word(const char *s, int size)
 	return (word);
 }
 
-char	**ft_super_split(char const *s)
+char	**ft_super_split(char *s)
 {
 	char	**strs;
 	int		j;
@@ -127,11 +127,14 @@ char	**ft_super_split(char const *s)
 			while (j > -1)
 				free(strs[j--]);
 			free(strs);
+			free(s);
 			return (NULL);
 		}
 		j++;
 		s += word_size;
 	}
 	strs[j] = NULL;
+	if (!s)
+		free(s);
 	return (strs);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vamologl <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: vamologl <vamologl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 11:06:26 by vamologl          #+#    #+#             */
-/*   Updated: 2024/01/23 11:06:28 by vamologl         ###   ########.fr       */
+/*   Updated: 2024/04/02 11:22:05 by vamologl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,7 @@ void	init_base(t_base *base, char **env)
 	base->return_value = 0;
 	base->return_value_flag = 0;
 	base->loop = 0;
+	base->tablen = NULL;
 }
 
 int	main(int ac, char **av, char **env)

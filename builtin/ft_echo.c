@@ -6,7 +6,7 @@
 /*   By: vamologl <vamologl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/02 14:09:18 by vamologl          #+#    #+#             */
-/*   Updated: 2024/03/29 15:08:27 by vamologl         ###   ########.fr       */
+/*   Updated: 2024/04/04 16:04:27 by vamologl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,8 @@ void	echo_putstr_fd(char *s, int fd)
 	{
 		while (s[i])
 		{
-			if (s[i] == '\'' || s[i] == '\"')
-				i++;
-			else
-			{
-				write(fd, &s[i], 1);
-				i++;
-			}
+			write(fd, &s[i], 1);
+			i++;
 		}
 	}
 }

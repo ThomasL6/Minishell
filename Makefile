@@ -6,7 +6,7 @@
 #    By: vamologl <vamologl@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/23 11:11:30 by vamologl          #+#    #+#              #
-#    Updated: 2024/03/29 15:35:02 by vamologl         ###   ########.fr        #
+#    Updated: 2024/04/04 15:31:16 by vamologl         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,6 +33,7 @@ SRCS = main.c \
 	lists/listchained2.c \
 	parse/ft_super_split.c \
 	parse/parser.c \
+	parse/parse_env_var.c \
 	parse/parser_error.c \
 	parse/parser_utils.c \
 	parse/parser_utils2.c \
