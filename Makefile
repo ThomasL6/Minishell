@@ -6,7 +6,7 @@
 #    By: vamologl <vamologl@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/23 11:11:30 by vamologl          #+#    #+#              #
-#    Updated: 2024/04/04 15:31:16 by vamologl         ###   ########.fr        #
+#    Updated: 2024/04/05 14:58:09 by vamologl         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -59,6 +59,9 @@ OBJS = $(SRCS:.c=.o)
 all : $(NAME)
 
 alldb : $(NAME)
+
+leaks : $(NAME)
+	valgrind --suppressions=./.valgrind_ignore_leaks.txt --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --show-mismatched-frees=yes --read-var-info=yes ./minishell
 
 %.o : %.c
 	$(CC) $(CFLAGS) -c $< -o $@

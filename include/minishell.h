@@ -6,7 +6,7 @@
 /*   By: vamologl <vamologl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 11:06:32 by vamologl          #+#    #+#             */
-/*   Updated: 2024/04/04 15:30:44 by vamologl         ###   ########.fr       */
+/*   Updated: 2024/04/10 11:07:08 by vamologl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ typedef struct s_base
 	char	*env_path;
 	int		flag_redir;
 	int		loop;
-	int		*tablen;
+	int		tablen;
 
 	int		return_value;
 	int		return_value_flag;
@@ -213,9 +213,9 @@ void	error(int i, t_base *base);
 void	fd_change(t_base *base);
 
 char	*check_last_pipe(char *s);
-char	***build_tab(char *s);
+char	***build_tab(char *s, t_base *base);
 char	***pre_build_tab(t_base *base, char *s);//, t_base *base);
-char	***ft_ultra_split(char *s);
+char	***ft_ultra_split(char *s, t_base *base);
 char	***ft_ultra_while(int j, int k, char ***tab, char **tmp);
 
 int		chrcmp(char c, char *s);

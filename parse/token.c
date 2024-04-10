@@ -6,7 +6,7 @@
 /*   By: vamologl <vamologl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 13:56:10 by vamologl          #+#    #+#             */
-/*   Updated: 2024/04/04 15:42:15 by vamologl         ###   ########.fr       */
+/*   Updated: 2024/04/10 11:08:44 by vamologl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,9 @@ char	***ft_ultra_while(int j, int k, char ***tab, char **tmp)
 	return (tab);
 }
 
-char	***ft_ultra_split(char *s)
+char	***ft_ultra_split(char *s, t_base *base)
 {
+	(void)base;
 	char	**tmp;
 	char	***tab;
 
@@ -50,7 +51,8 @@ char	***ft_ultra_split(char *s)
 	tmp = ft_super_split(s);
 	if (!tmp)
 		return (NULL);
-	tab = ft_ultra_while(0, 0, tab, tmp);
+	tab = ft_ultra_while(0, 0, tab, &*tmp);
+	base->tablen = (hm_pipe(s) + 2);
 	free_tab(tmp);
 	return (tab);
 }
@@ -76,14 +78,14 @@ char	*check_last_pipe(char *s)
 		return (s);
 }
 
-char	***build_tab(char *s)
+char	***build_tab(char *s, t_base *base)
 {
 	char	***tab;
 
 	if (find_pipe(s) == -1)
 		return (NULL);
 	s = correct_input_for_parser(s);
-	tab = ft_ultra_split(s);
+	tab = ft_ultra_split(s, base);
 	if (!tab)
 		return (NULL);
 	return (tab);
@@ -114,7 +116,7 @@ char ***pre_build_tab(t_base *base, char *s)
 
 	if (find_pipe(s) == -1)
 		return (NULL);
-	tab = ft_ultra_split(s);
+	tab = ft_ultra_split(s, base);
 	if (!tab)
 		return (NULL);
 	(void)base;

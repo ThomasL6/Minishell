@@ -6,7 +6,7 @@
 /*   By: vamologl <vamologl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 11:06:26 by vamologl          #+#    #+#             */
-/*   Updated: 2024/04/04 16:01:33 by vamologl         ###   ########.fr       */
+/*   Updated: 2024/04/10 11:10:49 by vamologl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,7 @@ void	tab_greg(char **tab) // the amazing print tab
 		return ;
 	while (tab && tab[i])
 	{
+		printf("tab[i] = %s\n", tab[i]);
 		i++;
 	}
 }
@@ -162,7 +163,6 @@ char	**remove_null_in_tab(char **tab)
 		}
 	}
 	ret[j] = NULL; 
-	tab_greg(ret);
 	free_tab(tab);
 	return (ret);
 }
@@ -171,7 +171,6 @@ char	**remove_null_in_tab(char **tab)
 
 void	get_command(char ***tableau, int j, t_base *base)
 {
-	tab_greg(tableau[j]);
 	if (no_command(tableau[j]) == 0)
 	{
 		if (ft_strcmp("", tableau[j][0]) == 0)
@@ -195,7 +194,9 @@ void	get_command(char ***tableau, int j, t_base *base)
 				ft_unset(base);
 			else if (ft_strcmp("exit", tableau[j][0]) == 0)
 				ft_exit(base, j);
-			else if (!ft_exec_prog(tableau[j], base))
+			else if (!ft_exec_prog(tableau[j], base) || 
+				ft_strcmp(tableau[j][0], "..") == 0 || 
+				ft_strcmp(tableau[j][0], ".") == 0)
 			{
 				ft_putstr_fd(base->tableau[j][0], base->fd_out);
 				ft_putstr_fd(": command not found\n", base->fd_out);
@@ -246,8 +247,7 @@ void	parser(t_base *base)
 	get_file_inpout(base, base->tableau[0], 0); // set in/out
 	base->tableau[0] = get_exec(base->tableau[0]); // get exec
 	get_command(base->tableau, 0, base);
-	free(base->tablen);
-	ft_bzero(base->input, ft_strlen(base->input));
+	// ft_bzero(base->input, ft_strlen(base->input));
 	dup2(base->terminal_in, base->fd_out);
 	dup2(base->terminal_out, base->fd_in);
 }

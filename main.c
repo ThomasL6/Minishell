@@ -6,7 +6,7 @@
 /*   By: vamologl <vamologl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 11:06:26 by vamologl          #+#    #+#             */
-/*   Updated: 2024/04/02 11:22:05 by vamologl         ###   ########.fr       */
+/*   Updated: 2024/04/10 11:19:06 by vamologl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ void	ft_loop(t_base *base)
 {
 	while (1)
 	{
+		base->tablen = 0;
 		base->return_value_flag = 0;
 		base->input = readline(base->user);
 		if (base->input == NULL)
@@ -89,7 +90,7 @@ void	init_base(t_base *base, char **env)
 	base->tableau = malloc(sizeof(char ***) * 1);
 	base->tableau[0] = NULL;
 	base->input = NULL;
-	base->user = NULL;//
+	base->user = NULL;
 	base->cur_pwd = NULL;
 	base->env_old = env;
 	base->output_file = NULL;
@@ -99,13 +100,12 @@ void	init_base(t_base *base, char **env)
 	base->terminal_out = dup(0);
 	base->fd_in = dup(1);
 	base->fd_out = dup(0);
-	// base->ft_custom_exit = open("debug.txt", O_CREAT | O_RDWR | O_TRUNC, 0644);
 	base->env_path = NULL;
 	base->flag_redir = 0;
 	base->return_value = 0;
 	base->return_value_flag = 0;
 	base->loop = 0;
-	base->tablen = NULL;
+	base->tablen = 0;
 }
 
 int	main(int ac, char **av, char **env)

@@ -6,7 +6,7 @@
 /*   By: vamologl <vamologl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/13 15:47:53 by thlefebv          #+#    #+#             */
-/*   Updated: 2024/04/02 10:54:36 by vamologl         ###   ########.fr       */
+/*   Updated: 2024/04/10 10:53:32 by vamologl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,8 @@ void	free_tab(char **tab)
 		tab[i] = NULL;
 		i++;
 	}
-	free(tab);
+	if (tab)
+		free(tab);
 	tab = NULL;
 }
 
@@ -49,7 +50,8 @@ char	*get_my_env(char *name, char **env)
 	while (env[i])
 	{
 		str_env = ft_split(env[i], '=');
-		if (str_env && ft_strncmp(name, str_env[0], ft_strlen(str_env[0])) == 0)
+		if (str_env && ft_strncmp(name, str_env[0], 
+			ft_strlen(str_env[0])) == 0)
 		{
 			if (str_env[1] == NULL)
 				continue ;

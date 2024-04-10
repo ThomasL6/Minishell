@@ -6,7 +6,7 @@
 /*   By: vamologl <vamologl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 16:13:06 by thlefebv          #+#    #+#             */
-/*   Updated: 2024/04/04 15:59:15 by vamologl         ###   ########.fr       */
+/*   Updated: 2024/04/10 10:58:15 by vamologl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,12 +57,16 @@ int	is_there_char(char *s, char c)
 void	get_input_tab(t_base *base, int i)
 {
 	int	j;
+	char *to_free;
 
 	j = 0;
 	base->tableau[i] = ft_super_split(base->input);
+	base->tablen = 1;
 	while (base->tableau[i][j])
 	{
+		to_free = base->tableau[i][j];
 		base->tableau[i][j] = modif_token(base->tableau[i][j], base);
+		free(to_free);
 		j++;
 	}
 }

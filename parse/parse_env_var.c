@@ -6,7 +6,7 @@
 /*   By: vamologl <vamologl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/04 15:26:05 by vamologl          #+#    #+#             */
-/*   Updated: 2024/04/04 15:41:05 by vamologl         ###   ########.fr       */
+/*   Updated: 2024/04/05 11:58:20 by vamologl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,12 +54,11 @@ char *extract_dollar(const char *s, int *idx, t_base *base)
 	char *ret;
 
 	ret = NULL;
-	(*idx)++; // pass the '$'
+	(*idx)++;
 	if (s[(*idx)] && s[(*idx)] == '?')
 	{
-		(*idx)++; // pass the '?'
-		// return("2"); // 	
-		return (ft_itoa(base->return_value)); /* here */
+		(*idx)++;	
+		return (ft_itoa(base->return_value));
 	}
 	i = (*idx);
 	while (s[(*idx)] && s[(*idx)] != ' ' && s[(*idx)] != '\"'
@@ -68,39 +67,39 @@ char *extract_dollar(const char *s, int *idx, t_base *base)
 	ret = addsr(ret, &s[i], (*idx) - i);
 	if (!ret)
 		return (ft_strdup("$"));
-	// return (get_env(ret, base)); /* here */
-	return (prep_char_env(base, ret));
+	ret = prep_char_env(base, ret);
+	return (ret);
 }
 
 
 
-char *extract_quote(char *s, int *idx, t_base *base, const char quote) /* here */
+char *extract_quote(char *s, int *idx, t_base *base, const char quote) 
 {
 	int		i;
 	char	*ret;
 	char	*dollar;
 
-	(*idx)++; // pass the first quote
+	(*idx)++;
 	ret = NULL;
 	dollar = NULL;
 	while ((*idx) < (int)ft_strlen(s) && s[(*idx)] != quote)
 	{
-		i = *idx; // to get the len
+		i = *idx;
 		while (s[(*idx)] != quote && !(s[(*idx)] == '$' && quote == '\"'))
 			(*idx)++;
-		ret = addsr(ret, &s[i], (*idx) - i); //add to ret for return value ?
+		ret = addsr(ret, &s[i], (*idx) - i);
 		if (s[(*idx)] && s[(*idx)] != quote)
 		{
-			dollar = extract_dollar(s, idx, base); //extract the dollar if found /* here */
-			ret = addsr(ret, dollar, ft_strlen(dollar)); // add true value to ret
-			free(dollar); //free dollar after joining it with ret
+			dollar = extract_dollar(s, idx, base);
+			ret = addsr(ret, dollar, ft_strlen(dollar));
+			free(dollar);
 		}
 	}
-	(*idx)++; // past the last quote
+	(*idx)++;
 	return (ret);
 }
 
-char	*modif_token(char *s, t_base *base) /* here */
+char	*modif_token(char *s, t_base *base) 
 {
 	int		i;
 	char	*special_str;
@@ -118,11 +117,11 @@ char	*modif_token(char *s, t_base *base) /* here */
 		if (!s[i])
 			break ;
 		if (s[i] == '$')
-			special_str = extract_dollar(s, &i, base); /* here */
+			special_str = extract_dollar(s, &i, base);
 		else
-			special_str = extract_quote(s, &i, base, s[i]); /* here */
+			special_str = extract_quote(s, &i, base, s[i]);
 		new_token = addsr(new_token, special_str, ft_strlen(special_str));
-		if (!special_str)
+		if (special_str)
 			free(special_str);
 		s = s + i;
 	}

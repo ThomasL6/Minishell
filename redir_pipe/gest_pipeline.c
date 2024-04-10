@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   gest_pipeline.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: thlefebv <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: vamologl <vamologl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 14:55:14 by thlefebv          #+#    #+#             */
-/*   Updated: 2024/03/26 14:55:16 by thlefebv         ###   ########.fr       */
+/*   Updated: 2024/04/05 15:11:58 by vamologl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ void execute_pipeline(char ***command, int nb_cmds, t_base *base)
 	int i;
 
 	i = 0;
+	pipefd[0] = 0;
+	pipefd[1] = 0;
 	prev_pipe_read = base->fd_in;
 	while (i < nb_cmds)
 	{

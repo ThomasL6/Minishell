@@ -3,30 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   gest_redir.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vamologl <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: vamologl <vamologl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/07 11:49:03 by vamologl          #+#    #+#             */
-/*   Updated: 2024/03/07 11:49:05 by vamologl         ###   ########.fr       */
+/*   Updated: 2024/04/10 11:09:31 by vamologl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
-
-void	free_tab_get_exec(char **tab)
-{
-	int i;
-
-	i = 0;
-    if (tab)
-    {
-		while (tab[i] != NULL)
-		{
-            free(tab[i]);
-			i++;
-        }
-        free(tab);
-    }
-}
 
 char	**get_exec(char **tab)
 {
@@ -56,9 +40,10 @@ char	**get_exec(char **tab)
         ret[k] = ft_strdup(tab[i]);
         i++;
         k++;
+	
     }
     ret[k] = NULL;
-    free_tab_get_exec(tab);
+    free_tab(tab);
     return (ret);
 }
 

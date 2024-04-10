@@ -6,7 +6,7 @@
 /*   By: vamologl <vamologl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 11:56:02 by vamologl          #+#    #+#             */
-/*   Updated: 2024/03/29 15:45:16 by vamologl         ###   ########.fr       */
+/*   Updated: 2024/04/10 11:00:48 by vamologl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,10 +85,27 @@ void	free_long_tab(char ***tab)
 	}
 }
 
+int	ft_super_tablen(char ***tab)
+{
+	int	i;
+
+	i = 0;
+	while (tab && tab[i])
+		i++;
+	return (i);
+}
+
 void	free_base(t_base *base)
 {
-	if (base->tableau)
-		free(base->tableau);
+	int i;
+
+	i = 0;
+	while (i < base->tablen)
+	{
+		free_tab(base->tableau[i]);
+		i++;
+	}
+	free(base->tableau);
 	if (base->input)
 		free(base->input);
 	if (base->user)
@@ -118,8 +135,8 @@ void	ft_exit(t_base *base, int i)
 	{
 		if (base->tableau[i][1] == NULL)
 		{
-			free_base(base);
 			message(1, base);
+			free_base(base);
 			exit(0);
 		}
 	}
